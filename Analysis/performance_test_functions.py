@@ -14,6 +14,10 @@ from Analysis.data_import import Configuration, StudyInfo
 
 preposition_list = StudyInfo.preposition_list
 
+basic_model_scores_folder = "model evaluation/basic scores"
+polysemy_scores_folder = "model evaluation/polysemy"
+polysemy_scores_all_preps_folder = "model evaluation/polysemy - all prepositions"
+
 
 class Model:
     """Summary
@@ -180,7 +184,7 @@ class Model:
             if c.is_satisfied(lhs, rhs):
                 counter += c.weight
             elif lhs == rhs:
-                counter += float(c.weight)/2
+                counter += float(c.weight) / 2
 
         return counter
 
@@ -288,7 +292,8 @@ class MultipleRuns:
 
     # This class carries out multiple runs of model tests and outputs the results
     # Number of runs must be specified as well as k for repeated k-fold sampling
-    def __init__(self, model_generator, study_info_, test_prepositions=preposition_list, number_runs=None,
+    def __init__(self, model_generator, scores_tables_folder, scores_plots_folder, study_info_,
+                 test_prepositions=preposition_list, number_runs=None,
                  k=None, compare=None, features_to_test=None):
         """Summary
 
@@ -315,14 +320,8 @@ class MultipleRuns:
 
         self.scene_list = self.study_info.scene_name_list
 
-
-        if self.features_to_test is None:
-
-            self.scores_tables_folder = self.study_info.name + "/scores/tables/all features"
-            self.scores_plots_folder = self.study_info.name + "/scores/plots/all features"
-        else:
-            self.scores_tables_folder = self.study_info.name + "/scores/tables/removed features"
-            self.scores_plots_folder = self.study_info.name + "/scores/plots/removed features"
+        self.scores_tables_folder = scores_tables_folder
+        self.scores_plots_folder = scores_plots_folder
 
         self.get_file_strings()
 
@@ -331,12 +330,13 @@ class MultipleRuns:
         self.model_name_list = self.Generate_Models_all_scenes.model_name_list
         self.constraint_dict = self.Generate_Models_all_scenes.models[0].constraint_dict
 
-
         self.prepare_comparison_dicts()
-        # folds_dict contains overall scores on each fold for each model
+        # overall_folds_dict contains overall scores on each fold for each model
         # our_model_feature_folds_dict contains scores for each preposition when feature is included
         # our_model_without_feature_folds_dict contains scores for each preposition when feature is removed
-        self.folds_dict, self.our_model_feature_folds_dict, self.our_model_without_feature_folds_dict = self.prepare_folds_dict()
+        self.overall_folds_dict, self.our_model_feature_folds_dict, self.our_model_without_feature_folds_dict = self.prepare_folds_dict()
+        # Also include avg scores from folds
+        self.avg_folds_dict = self.overall_folds_dict.copy()
 
         # following lists help confirm all scenes get used for both training and testing
         self.scenes_used_for_testing = []
@@ -344,7 +344,7 @@ class MultipleRuns:
 
     def get_file_strings(self):
         if not os.path.isdir(self.scores_tables_folder):
-            raise Exception("Not a valid path! 1")
+            raise Exception(f"Not a valid path! {self.scores_tables_folder}")
         if not os.path.isdir(self.scores_plots_folder):
             raise Exception("Not a valid path! 2")
 
@@ -362,8 +362,8 @@ class MultipleRuns:
             self.number_of_wins_csv = self.scores_tables_folder + "/numberofwins " + self.file_tag + ".csv"
 
             # Df of results from each fold
-            self.folds_csv = self.scores_tables_folder + "/folds " + self.file_tag + ".csv"
-
+            self.overall_folds_csv = self.scores_tables_folder + "/overall folds " + self.file_tag + ".csv"
+            self.avg_folds_csv = self.scores_tables_folder + "/avg folds " + self.file_tag + ".csv"
         if self.features_to_test is not None:
             self.comparison_csv = self.scores_tables_folder + "/repeatedcomparisons " + self.file_tag + ".csv"
             self.feature_removed_average_csv = dict()
@@ -459,12 +459,16 @@ class MultipleRuns:
         # Compare Models
         if self.compare is not None:
             # Get our score from dataframe
-            our_score = dataset.at["Overall", self.model_generator.our_model_name]
-            for other_model in self.model_name_list:
+            # our_score = dataset.at["Overall", self.model_generator.our_model_name]
+            for model in self.model_name_list:
                 # Get score
-                other_score = dataset.at["Overall", other_model]
+                overall_score = dataset.at["Overall", model]
 
-                self.folds_dict[other_model].append(other_score)
+                self.overall_folds_dict[model].append(overall_score)
+
+                avg_score = dataset.at["Average", model]
+
+                self.avg_folds_dict[model].append(avg_score)
 
         # Add scores to dataframe
         if self.features_to_test is not None:
@@ -534,19 +538,25 @@ class MultipleRuns:
         Returns:
             TYPE: Description
         """
-        # Check all folds have some constraints to test
+
         for f in folds:
+
+            # Check all folds have some constraints to test
             for preposition in self.test_prepositions:
 
-                allConstraints = self.constraint_dict[preposition]
+                all_constraints = self.constraint_dict[preposition]
 
-                Constraints = []
+                constraints = []
 
-                for c in allConstraints:
+                for c in all_constraints:
                     if c.scene in f:
-                        Constraints.append(c)
-                if len(Constraints) == 0:
+                        constraints.append(c)
+                if len(constraints) == 0:
                     return False
+
+        for model in self.Generate_Models_all_scenes.models:
+            model.folds_check(folds)
+
         return True
 
     def validation(self):
@@ -591,8 +601,11 @@ class MultipleRuns:
         # Output comparison of models and p-value
         if self.compare is not None:
             # Output folds
-            folds_df = pd.DataFrame(self.folds_dict)
-            folds_df.to_csv(self.folds_csv)
+            folds_df = pd.DataFrame(self.overall_folds_dict)
+            folds_df.to_csv(self.overall_folds_csv)
+
+            folds_df = pd.DataFrame(self.avg_folds_dict)
+            folds_df.to_csv(self.avg_folds_csv)
 
             # Calculate all p values
             # Read --- model1 in column x model2 in row is pvalue model1 is better than model2
@@ -603,8 +616,8 @@ class MultipleRuns:
                     if model1 == model2:
                         p_value = 0
                     else:
-                        model1_folds = self.folds_dict[model1]
-                        model2_folds = self.folds_dict[model2]
+                        model1_folds = self.overall_folds_dict[model1]
+                        model2_folds = self.overall_folds_dict[model2]
                         # Use of wilcoxon is recommended for this sort of test in
                         #  https://towardsdatascience.com/validating-your-machine-learning-model-25b4c8643fb7
                         # Though it may be unsafe as the samples are not independent.
@@ -620,8 +633,8 @@ class MultipleRuns:
             for model1 in self.model_name_list:
                 model1_dict = dict()
                 for model2 in self.model_name_list:
-                    model1_folds = self.folds_dict[model1]
-                    model2_folds = self.folds_dict[model2]
+                    model1_folds = self.overall_folds_dict[model1]
+                    model2_folds = self.overall_folds_dict[model2]
                     subtracted_folds = list(map(operator.sub, model1_folds, model2_folds))
                     model1_wins = 0
                     for f in subtracted_folds:
@@ -759,64 +772,14 @@ class MultipleRuns:
         self.plot_dataframe_bar_chart(dataset, file_to_save, x_label, y_label, plot_title)
 
 
-class MultipleRunsGeneric(MultipleRuns):
-    def __init__(self, model_generator, scores_tables_folder, scores_plots_folder, study_info_,
-                 test_prepositions=preposition_list, number_runs=None,
-                 k=None, compare=None):
-        self.study_info = study_info_
-
-        if not os.path.isdir(scores_tables_folder):
-            raise Exception("Not a valid path! 1")
-        if not os.path.isdir(scores_plots_folder):
-            raise Exception("Not a valid path! 2")
-
-        MultipleRuns.__init__(self, model_generator, self.study_info, test_prepositions=test_prepositions,
-                              number_runs=number_runs, k=k,
-                              compare=compare, features_to_test=None)
-
-        self.scores_tables_folder = scores_tables_folder
-        self.scores_plots_folder = scores_plots_folder
-        self.get_file_strings()
-
-    def folds_check(self, folds):
-        """Summary
-
-        Args:
-            folds (TYPE): Description
-
-        Returns:
-            TYPE: Description
-        """
-
-        for f in folds:
-
-            # Check all folds have some constraints to test
-            for preposition in self.test_prepositions:
-
-                all_constraints = self.constraint_dict[preposition]
-
-                constraints = []
-
-                for c in all_constraints:
-                    if c.scene in f:
-                        constraints.append(c)
-                if len(constraints) == 0:
-                    return False
-
-        for model in self.Generate_Models_all_scenes.models:
-            model.folds_check(folds)
-
-        return True
-
-
 def compare_models(runs, k, model_generator, base_output_folder):
     study_info = StudyInfo("2019 study")
 
-    m = MultipleRunsGeneric(model_generator, base_output_folder,
-                            base_output_folder, study_info, test_prepositions=preposition_list,
-                            number_runs=runs,
-                            k=k,
-                            compare="y")
+    m = MultipleRuns(model_generator, base_output_folder,
+                     base_output_folder, study_info, test_prepositions=preposition_list,
+                     number_runs=runs,
+                     k=k,
+                     compare="y")
     models_to_test = m.Generate_Models_all_scenes.models
 
     t = TestModels(models_to_test, "all")
