@@ -21,7 +21,6 @@ import matplotlib.pyplot as plt
 # Modules for testing and model making
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression, Ridge
-from scipy.special import comb
 
 # Local module imports
 from typing import Dict
@@ -1104,65 +1103,6 @@ def get_standard_preposition_parameters():
     return preposition_models_dict
 
 
-def plot_preposition_graphs(study_info):
-    """Summary
-    
-    Args:
-        study_info (TYPE): Description
-    """
-    scene_list = study_info.scene_name_list
-    generated_models = GenerateBasicModels(scene_list, scene_list, study_info)
-
-    for p in preposition_list:
-        M = generated_models.preposition_parameters_dict[p]
-        M.output_models()
-        M.plot_models()
-
-
-def plot_feature_regression(study_info):
-    mpl.rcParams['axes.titlesize'] = 'xx-large'
-    mpl.rcParams['axes.labelsize'] = 'xx-large'
-
-    scene_list = study_info.scene_name_list
-    generated_models = GenerateBasicModels(scene_list, scene_list, study_info)
-
-    Minside = generated_models.preposition_parameters_dict["inside"]
-    Minside.plot_single_feature_regression("bbox_overlap_proportion")
-
-
-def plot_feature_spaces(study_info):
-    scene_list = study_info.scene_name_list
-    generated_models = GenerateBasicModels(scene_list, scene_list, study_info)
-
-    Min = generated_models.preposition_parameters_dict["in"]
-    Min.plot_feature_space("bbox_overlap_proportion", "location_control")
-
-    Mon = generated_models.preposition_parameters_dict["on"]
-    Mon.plot_feature_space("support", "contact_proportion")
-    Mon.plot_feature_space("support", "above_proportion")
-
-    Minside = generated_models.preposition_parameters_dict["inside"]
-    Minside.plot_feature_space("bbox_overlap_proportion", "location_control")
-
-
-def calculate_p_value(N, x):
-    """Summary
-    
-    Args:
-        N (TYPE): Description
-        x (TYPE): Description
-    
-    Returns:
-        TYPE: Description
-    """
-    total = 0
-    for i in range(x, N + 1):
-        v = comb(N, i) * (math.pow(0.5, N))
-
-        total += v
-    return total
-
-
 def test_features(study_info_):
     """Summary
     
@@ -1264,24 +1204,18 @@ def main(study_info_):
     Args:
         study_info_ (StudyInfo): Description
     """
-    # mpl.rcParams['font.size'] = 25
 
-    #
-    # plot_feature_regression(study_info_)
-    # plot_feature_spaces(study_info_)
-    # output_regression_scores(study_info_)
-    # plot_preposition_graphs(study_info_)
     # # Edit plot settings
-    # mpl.rcParams['font.size'] = 40
-    # mpl.rcParams['legend.fontsize'] = 37
-    # mpl.rcParams['axes.titlesize'] = 'medium'
-    # mpl.rcParams['axes.labelsize'] = 'medium'
-    # mpl.rcParams['ytick.labelsize'] = 'small'
+    mpl.rcParams['font.size'] = 40
+    mpl.rcParams['legend.fontsize'] = 37
+    mpl.rcParams['axes.titlesize'] = 'medium'
+    mpl.rcParams['axes.labelsize'] = 'medium'
+    mpl.rcParams['ytick.labelsize'] = 'small'
     # plot_all_csv(study_info_)
     # 
     initial_test(study_info_)
-    # test_models(study_info_)
-    # test_features(study_info_)
+    test_models(study_info_)
+    test_features(study_info_)
     pass
 
 
