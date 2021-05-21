@@ -1,6 +1,7 @@
 import matplotlib as mpl
 
 from Analysis.baseline_model_testing import GenerateBasicModels, preposition_list
+from Analysis.data_import import StudyInfo
 
 
 def plot_feature_regression(study_info):
@@ -39,9 +40,15 @@ def plot_preposition_graphs(study_info):
     generated_models = GenerateBasicModels(scene_list, scene_list, study_info)
 
     for p in preposition_list:
+
         M = generated_models.preposition_parameters_dict[p]
         M.output_models()
         M.plot_models()
 
-if __name__ == "main":
+
+if __name__ == "__main__":
+    study_info = StudyInfo("2019 study")
     mpl.rcParams['font.size'] = 25
+    plot_feature_regression(study_info)
+    plot_feature_spaces(study_info)
+    plot_preposition_graphs(study_info)

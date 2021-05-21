@@ -34,6 +34,7 @@ sv_filetag = SemanticCollection.filetag  # Tag for sv task files
 comp_filetag = ComparativeCollection.filetag  # Tag for comp task files
 preposition_list = StudyInfo.preposition_list
 
+basic_model_property_folder = "model info/basic"
 
 def rename_feature(feature):
     # Rename some features
@@ -265,7 +266,7 @@ class GeneratePrepositionModelParameters:
         # prototype calculated using regression. Stored as array
         self.prototype = []
 
-        self.prototype_csv = self.study_info.model_info_folder + "/prototypes/" + preposition + ".csv"
+        self.prototype_csv = basic_model_property_folder + "/prototypes/" + preposition + ".csv"
 
         # regression weights calculated by linear regression. stored as array and dataframe
         self.poly_regression_model = None
@@ -275,8 +276,8 @@ class GeneratePrepositionModelParameters:
         self.ridge_regression_model = None
 
         self.regression_weights = []
-        self.regression_weight_csv = self.study_info.model_info_folder + "/regression weights/" + preposition + ".csv"
-        self.all_features_regression_weight_csv = self.study_info.model_info_folder + "/regression weights/allfeatures_" + preposition + ".csv"
+        self.regression_weight_csv = basic_model_property_folder + "/regression weights/" + preposition + ".csv"
+        self.all_features_regression_weight_csv = basic_model_property_folder + "/regression weights/allfeatures_" + preposition + ".csv"
 
         # Stores model predictions for later plotting
         self.interval_predictions = dict()
@@ -284,12 +285,12 @@ class GeneratePrepositionModelParameters:
         # barycentre_prototype . stored as array
         self.barycentre_prototype = None
 
-        self.barycentre_csv = self.study_info.model_info_folder + "/barycentre model/" + preposition + "-prototype.csv"
+        self.barycentre_csv = basic_model_property_folder + "/barycentre model/" + preposition + "-prototype.csv"
 
         # exemplar_mean . stored as array
         self.exemplar_mean = None
 
-        self.exemplar_csv = self.study_info.model_info_folder + "/exemplar/" + preposition + "-exemplar_means.csv"
+        self.exemplar_csv = basic_model_property_folder + "/exemplar/" + preposition + "-exemplar_means.csv"
 
     def remove_nontrainingscenes(self, d):
         """Summary
@@ -690,7 +691,7 @@ class GeneratePrepositionModelParameters:
             filename = self.polyseme.plot_folder + self.preposition + "-" + self.polyseme.polyseme_name + x + ' .pdf'
         else:
 
-            filename = self.study_info.model_info_folder + "/plots/" + self.preposition + x + ".pdf"
+            filename = basic_model_property_folder + "/plots/" + self.preposition + x + ".pdf"
         return filename
 
     def plot_models(self, base_folder=None):
@@ -738,7 +739,7 @@ class GeneratePrepositionModelParameters:
         fig.tight_layout()
         fig.canvas.set_window_title('Ratio vs. Feature')
         self.plot_features_ratio_to_axis(feature, axes)
-        filename = self.study_info.model_info_folder + "/plots/individual features/" + self.preposition + feature + ".pdf"
+        filename = basic_model_property_folder + "/plots/individual features/" + self.preposition + feature + ".pdf"
         plt.savefig(filename, bbox_inches='tight')
         plt.close(fig)
 
@@ -809,7 +810,7 @@ class GeneratePrepositionModelParameters:
                    fontsize=15)
 
         # plt.title("Instances of '" + self.preposition + "'")
-        filename = self.study_info.model_info_folder + "/plots/feature spaces/" + self.preposition + feature1 + feature2 + ".pdf"
+        filename = basic_model_property_folder + "/plots/feature spaces/" + self.preposition + feature1 + feature2 + ".pdf"
         plt.savefig(filename, bbox_inches='tight')
         plt.clf()
 
