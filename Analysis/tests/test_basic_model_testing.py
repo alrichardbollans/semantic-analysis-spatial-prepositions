@@ -7,7 +7,7 @@ sys.path.append('../')
 import unittest
 import os
 from Analysis.performance_test_functions import TestModels
-from Analysis.basic_model_testing import *
+from Analysis.baseline_model_testing import *
 from test_functions import *
 
 from pandas._testing import assert_frame_equal
@@ -43,7 +43,8 @@ class Test(unittest.TestCase):
 
         original_dataframe = pd.read_csv(archive_folder+'2019 study/scores/tables/all-model scores.csv', index_col=0)
 
-        m = MultipleRuns(GenerateBasicModels, study_info,number_runs=1,k=10)
+        m = MultipleRuns(GenerateBasicModels,basic_model_scores_folder + "/tables/all features",
+                     basic_model_scores_folder + "/plots/all features", study_info,number_runs=1,k=10)
         self.t_multiple_runs(m)
 
         generate_models = m.Generate_Models_all_scenes
@@ -69,7 +70,8 @@ class Test(unittest.TestCase):
     def test_k_fold(self):
         study_info = StudyInfo("2019 study")
 
-        m = MultipleRuns(GenerateBasicModels, study_info, number_runs=20, k=2, compare="y")
+        m = MultipleRuns(GenerateBasicModels,basic_model_scores_folder + "/tables/all features",
+                     basic_model_scores_folder + "/plots/all features", study_info, number_runs=20, k=2, compare="y")
 
         self.assertIsInstance(m.Generate_Models_all_scenes, GenerateBasicModels)
         self.assertIsInstance(m.Generate_Models_all_scenes.features_to_remove, list)
@@ -96,7 +98,8 @@ class Test(unittest.TestCase):
 
         study_info = StudyInfo("2019 study")
         functional_features = ["location_control", "support"]
-        m = MultipleRuns(GenerateBasicModels, study_info, number_runs=20, k=2, features_to_test=functional_features)
+        m = MultipleRuns(GenerateBasicModels,basic_model_scores_folder + "/tables/all features",
+                     basic_model_scores_folder + "/plots/all features", study_info, number_runs=20, k=2, features_to_test=functional_features)
         self.assertIsInstance(m.Generate_Models_all_scenes, GenerateBasicModels)
         self.assertIsInstance(m.Generate_Models_all_scenes.features_to_remove, list)
         self.assertEqual(m.Generate_Models_all_scenes.features_to_remove, Configuration.object_specific_features.copy())
@@ -163,7 +166,8 @@ class Test(unittest.TestCase):
     def test_model_parameters(self):
         study_info = StudyInfo("2019 study")
 
-        m = MultipleRuns(GenerateBasicModels, study_info)
+        m = MultipleRuns(GenerateBasicModels,basic_model_scores_folder + "/tables/all features",
+                     basic_model_scores_folder + "/plots/all features", study_info)
 
         generate_models = m.Generate_Models_all_scenes
         models = generate_models.models
