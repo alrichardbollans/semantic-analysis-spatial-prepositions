@@ -27,7 +27,8 @@ from sklearn.cluster import KMeans
 import matplotlib as mpl
 
 from basic_model_testing import GeneratePrepositionModelParameters, SemanticMethods, PrototypeModel
-from Analysis.performance_test_functions import ModelGenerator, TestModels, MultipleRuns, Model
+from Analysis.performance_test_functions import ModelGenerator, TestModels, MultipleRuns, Model, polysemy_scores_folder, \
+    polysemy_scores_all_preps_folder
 from data_import import Configuration, StudyInfo
 from compile_instances import SemanticCollection, ComparativeCollection
 
@@ -147,16 +148,12 @@ class Polyseme:
         # self.regression_weights_csv = self.study_info.polyseme_data_folder + self.model_name + '/regression weights/' + self.preposition + "-" + self.polyseme_name + ' .csv'
         self.plot_folder = self.study_info.polyseme_data_folder + self.model_name + '/plots/'
 
-
         self.preposition_models = GeneratePrepositionModelParameters(self.study_info, self.preposition,
                                                                      self.train_scenes,
                                                                      features_to_remove=self.features_to_remove,
                                                                      polyseme=self, oversample=self.oversample)
 
-
-
         self.preposition_models.work_out_prototype_model()
-
 
         # Assign a rank/hierarchy to polysemes
 
@@ -167,7 +164,6 @@ class Polyseme:
 
         self.weights = self.preposition_models.regression_weights
         self.prototype = self.preposition_models.prototype
-
 
     def potential_instance(self, value_array: np.ndarray):
         """Summary
@@ -493,7 +489,6 @@ class DistinctPrototypePolysemyModel(PolysemyModel):
         f3 = SalientFeature("contact_proportion", contact03, "g")
         on_salient_features = [f1, f2, f3]
 
-
         out["on"] = self.refine_ideal_meaning("on", on_salient_features)
 
         # In
@@ -648,8 +643,9 @@ class DistinctPrototypePolysemyModel(PolysemyModel):
 
                 polyseme.preposition_models.aff_dataset.to_csv(base_folder + polyseme.annotation_csv)
 
-                rank_out[preposition + "-" + polyseme.polyseme_name] = [len(polyseme.preposition_models.aff_dataset.index),
-                                                                        polyseme.rank]
+                rank_out[preposition + "-" + polyseme.polyseme_name] = [
+                    len(polyseme.preposition_models.aff_dataset.index),
+                    polyseme.rank]
 
                 prototype_out[preposition + "-" + polyseme.polyseme_name] = polyseme.prototype
                 weight_out[preposition + "-" + polyseme.polyseme_name] = polyseme.weights
@@ -815,6 +811,7 @@ class KMeansPolysemyModel(PolysemyModel):
                 if len(prep_model.affFeatures.index) < KMeansPolysemyModel.cluster_numbers[preposition]:
                     return False
 
+
 class GeneratePolysemeModels(ModelGenerator):
     """Summary
     
@@ -908,104 +905,6 @@ class GeneratePolysemeModels(ModelGenerator):
             self.model_name_list.append(m.name)
 
 
-class MultipleRunsPolysemyModels(MultipleRuns):
-    """Summary
-    
-    Attributes:
-        all_csv (TYPE): Description
-        all_plot (TYPE): Description
-        average_csv (TYPE): Description
-        average_plot_pdf (TYPE): Description
-        average_plot_title (TYPE): Description
-        comparison_csv (TYPE): Description
-        file_tag (TYPE): Description
-        km_comparison_csv (TYPE): Description
-        scores_plots_folder (TYPE): Description
-        scores_tables_folder (TYPE): Description
-        study_info (TYPE): Description
-    """
-
-    def __init__(self, model_generator, scores_tables_folder, scores_plots_folder, study_info_,
-                 test_prepositions=None, number_runs=None, k=None,
-                 compare=None):
-        """Summary
-        
-        Args:
-            study_info_ (TYPE): Description
-            number_runs (None, optional): Description
-            k (None, optional): Description
-            compare (None, optional): Description
-        
-        Deleted Parameters:
-            study_info (TYPE): Description
-            constraint_dict (TYPE): Description
-            features_to_test (None, optional): Description
-        """
-
-        if test_prepositions is None:
-            test_prepositions = polysemous_preposition_list
-
-        self.study_info = study_info_
-
-        if not os.path.isdir(scores_tables_folder):
-            raise Exception("Not a valid path! 1")
-        if not os.path.isdir(scores_plots_folder):
-            raise Exception("Not a valid path! 2")
-
-        MultipleRuns.__init__(self, model_generator, self.study_info, test_prepositions=test_prepositions,
-                              number_runs=number_runs, k=k,
-                              compare=compare, features_to_test=None)
-
-        self.scores_tables_folder = scores_tables_folder
-        self.scores_plots_folder = scores_plots_folder
-
-        self.get_file_strings()
-
-    def folds_check(self, folds):
-        """Summary
-
-        Args:
-            folds (TYPE): Description
-
-        Returns:
-            TYPE: Description
-        """
-
-
-        for f in folds:
-
-            # Check all folds have some constraints to test
-            for preposition in self.test_prepositions:
-
-                allConstraints = self.constraint_dict[preposition]
-
-                constraints_for_fold = []
-
-                for c in allConstraints:
-                    if c.scene in f:
-                        constraints_for_fold.append(c)
-                if len(constraints_for_fold) == 0:
-
-                    return False
-
-            if KMeansPolysemyModel.name in self.Generate_Models_all_scenes.model_name_list:
-                # And also check that there are enough training samples for the K-Means model
-                # in scenes not in fold
-                # (samples must be greater than number of clusters..)
-                scenes_not_in_fold = []
-                for sc in self.study_info.scene_name_list:
-                    if sc not in f:
-                        scenes_not_in_fold.append(sc)
-                for preposition in self.test_prepositions:
-                    # Add some features to remove to ignore print out
-                    prep_model = GeneratePrepositionModelParameters(self.study_info, preposition, scenes_not_in_fold,
-                                                                    features_to_remove=Configuration.object_specific_features)
-                    if len(prep_model.affFeatures.index) < KMeansPolysemyModel.cluster_numbers[preposition]:
-                        return False
-
-        return True
-
-
 def output_all_polyseme_info(study_info_):
     """Summary
     :param study_info_:
@@ -1050,9 +949,9 @@ def test_model(runs, k, study_info_):
         study_info_ (TYPE): Description
         :param study_info_:
     """
-    m = MultipleRunsPolysemyModels(GeneratePolysemeModels, study_info_.polysemy_score_folder + "tables",
-                                   study_info.polysemy_score_folder + "plots", study_info_, number_runs=runs, k=k,
-                                   compare="y")
+    m = MultipleRuns(GeneratePolysemeModels, study_info_.polysemy_score_folder + "tables",
+                     study_info.polysemy_score_folder + "plots", study_info_, number_runs=runs, k=k,
+                     compare="y", test_prepositions=polysemous_preposition_list)
     print(("Test Model k = " + str(k)))
     m.validation()
     m.output()
@@ -1113,10 +1012,7 @@ def main(study_info_):
     test_models(study_info_)
 
 
-
-
 if __name__ == '__main__':
     study_info = StudyInfo("2019 study")
 
     main(study_info)
-
