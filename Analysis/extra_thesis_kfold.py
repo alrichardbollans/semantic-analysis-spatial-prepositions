@@ -9,7 +9,7 @@ from basic_model_testing import GeneratePrepositionModelParameters, preposition_
 from classes import Instance, CompInstance, Comparison
 from compile_instances import SemanticCollection, ComparativeCollection
 from data_import import SimpleConfiguration, StudyInfo, Configuration
-from Analysis.performance_test_functions import MultipleRunsGeneric
+from Analysis.performance_test_functions import MultipleRuns
 from process_data import SemanticAnnotation, ComparativeAnnotation
 
 extra_folder = 'extra thesis results/updated kfold'
@@ -341,13 +341,13 @@ class GenerateBasicModelsSplitUsers(GenerateModelsSplitUsers):
             self.model_name_list.append(m.name)
 
 
-class MultipleRunsGenericSplitParticipants(MultipleRunsGeneric):
+class MultipleRunsSplitParticipants(MultipleRuns):
     def __init__(self, model_generator, scores_tables_folder, scores_plots_folder, study_info_,
                  test_prepositions=preposition_list, number_runs=None,
                  k=None, compare=None):
-        MultipleRunsGeneric.__init__(self, model_generator, scores_tables_folder, scores_plots_folder, study_info_,
-                                     test_prepositions=test_prepositions, number_runs=number_runs,
-                                     k=k, compare=compare)
+        MultipleRuns.__init__(self, model_generator, scores_tables_folder, scores_plots_folder, study_info_,
+                              test_prepositions=test_prepositions, number_runs=number_runs,
+                              k=k, compare=compare)
 
     def folds_check(self, folds):
         """Summary
@@ -406,9 +406,9 @@ def test_basic_models():
 
     runs =100
     k=2
-    m = MultipleRunsGenericSplitParticipants(GenerateBasicModelsSplitUsers, extra_folder + "/scores",
-                            extra_folder + "/scores",
-                            study_info, number_runs=runs, k=k, compare="y")
+    m = MultipleRunsSplitParticipants(GenerateBasicModelsSplitUsers, extra_folder + "/scores",
+                                      extra_folder + "/scores",
+                                      study_info, number_runs=runs, k=k, compare="y")
     print(("Test Model k = " + str(k)))
     m.validation()
     m.output()
