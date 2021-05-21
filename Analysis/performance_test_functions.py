@@ -179,6 +179,8 @@ class Model:
             rhs = self.get_typicality_rhs(c)
             if c.is_satisfied(lhs, rhs):
                 counter += c.weight
+            elif lhs == rhs:
+                counter += float(c.weight)/2
 
         return counter
 
@@ -603,6 +605,9 @@ class MultipleRuns:
                     else:
                         model1_folds = self.folds_dict[model1]
                         model2_folds = self.folds_dict[model2]
+                        # Use of wilcoxon is recommended for this sort of test in
+                        #  https://towardsdatascience.com/validating-your-machine-learning-model-25b4c8643fb7
+                        # Though it may be unsafe as the samples are not independent.
                         T, p_value = wilcoxon(model1_folds, model2_folds, alternative='greater')
                     model1_dict[model2] = p_value
                 model1_p_value_df = pd.DataFrame(model1_dict, [model1])
