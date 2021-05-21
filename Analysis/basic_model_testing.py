@@ -26,7 +26,7 @@ from scipy.special import comb
 # Local module imports
 from typing import Dict
 
-from Analysis.performance_test_functions import ModelGenerator, MultipleRuns, Model
+from Analysis.performance_test_functions import ModelGenerator, MultipleRuns, Model, basic_model_scores_folder
 from compile_instances import InstanceCollection, SemanticCollection, ComparativeCollection
 from data_import import Configuration, StudyInfo
 
@@ -818,7 +818,8 @@ class GeneratePrepositionModelParameters:
 class PrototypeModel(Model):
     name = "Our Prototype"
 
-    def __init__(self, preposition_model_dict: Dict[str, GeneratePrepositionModelParameters], test_scenes, study_info_: StudyInfo, test_prepositions=preposition_list,
+    def __init__(self, preposition_model_dict: Dict[str, GeneratePrepositionModelParameters], test_scenes,
+                 study_info_: StudyInfo, test_prepositions=preposition_list,
                  constraint_csv_removed_users=None):
         self.preposition_model_dict = preposition_model_dict
 
@@ -830,7 +831,6 @@ class PrototypeModel(Model):
 
         Model.__init__(self, PrototypeModel.name, test_scenes, study_info_, test_prepositions=test_prepositions,
                        constraint_csv_removed_users=constraint_csv_removed_users)
-
 
     def get_typicality(self, preposition, value_array, scene=None, figure=None, ground=None, study=None):
         p_model = self.preposition_model_dict[preposition]
@@ -1170,7 +1170,9 @@ def test_features(study_info_):
         study_info_ (TYPE): Description
     """
     functional_features = ["location_control", "support"]
-    m = MultipleRuns(GenerateBasicModels, study_info_, number_runs=100, k=2, features_to_test=functional_features)
+    m = MultipleRuns(GenerateBasicModels, basic_model_scores_folder + "/tables/removed features",
+                     basic_model_scores_folder + "/plots/removed features", study_info_, number_runs=100, k=2,
+                     features_to_test=functional_features)
     print("Test Features")
     m.validation()
     m.output()
@@ -1182,7 +1184,8 @@ def initial_test(study_info_):
     Args:
         study_info_ (TYPE): Description
     """
-    m = MultipleRuns(GenerateBasicModels, study_info_)
+    m = MultipleRuns(GenerateBasicModels, basic_model_scores_folder + "/tables/all features",
+                     basic_model_scores_folder + "/plots/all features", study_info_)
     print("Test on all scenes")
     m.test_all_scenes()
 
@@ -1193,7 +1196,8 @@ def test_models(study_info_):
     Args:
         study_info_ (TYPE): Description
     """
-    m = MultipleRuns(GenerateBasicModels, study_info_, number_runs=100, k=2, compare="y")
+    m = MultipleRuns(GenerateBasicModels, basic_model_scores_folder + "/tables/all features",
+                     basic_model_scores_folder + "/plots/all features", study_info_, number_runs=100, k=2, compare="y")
     print("Test Model k = 2")
     m.validation()
     m.output()
@@ -1210,7 +1214,8 @@ def plot_all_csv(study_info_):
     Args:
         study_info_ (TYPE): Description
     """
-    m = MultipleRuns(GenerateBasicModels, study_info_)
+    m = MultipleRuns(GenerateBasicModels, basic_model_scores_folder + "/tables/all features",
+                     basic_model_scores_folder + "/plots/all features", study_info_)
     file = m.all_csv
     out_file = m.all_plot
 
@@ -1225,7 +1230,8 @@ def plot_kfold_csv(k, study_info_):
         k (TYPE): Description
         study_info_ (TYPE): Description
     """
-    m = MultipleRuns(GenerateBasicModels, study_info_, number_runs=100, k=k)
+    m = MultipleRuns(GenerateBasicModels, basic_model_scores_folder + "/tables/all features",
+                     basic_model_scores_folder + "/plots/all features", study_info_, number_runs=100, k=k)
     file = m.average_csv
     out_file = m.average_plot_pdf
 
@@ -1240,7 +1246,9 @@ def plot_feature_csv(k, study_info_):
         study_info_ (TYPE): Description
     """
     functional_features = ["location_control", "support"]
-    m = MultipleRuns(GenerateBasicModels, study_info_, number_runs=100, k=k, features_to_test=functional_features)
+    m = MultipleRuns(GenerateBasicModels, basic_model_scores_folder + "/tables/removed features",
+                     basic_model_scores_folder + "/plots/removed features", study_info_, number_runs=100, k=k,
+                     features_to_test=functional_features)
     file = m.scores_tables_folder + "/functional_feature_analysis.csv"
     output_file = m.scores_plots_folder + "/ScoresWithRemovedFeatures.pdf"
     x_label = "Preposition"
@@ -1271,7 +1279,7 @@ def main(study_info_):
     # mpl.rcParams['ytick.labelsize'] = 'small'
     # plot_all_csv(study_info_)
     # 
-    # initial_test(study_info_)
+    initial_test(study_info_)
     # test_models(study_info_)
     # test_features(study_info_)
     pass
