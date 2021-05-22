@@ -35,13 +35,15 @@ def clean_name(object_name):
     Returns:
         string: Description
     """
-    if "." in object_name:
-        new_clean_name = object_name[: object_name.find(".")]
-    elif "_" in object_name:
-        new_clean_name = object_name[: object_name.find("_")]
+    if '(' in object_name:
+        new_clean_name = object_name[:object_name.find("(")]
+    elif '_' in object_name:
+        new_clean_name = object_name[:object_name.find("_")]
+    elif '.' in object_name:
+        new_clean_name = object_name[:object_name.find(".")]
     else:
         new_clean_name = object_name
-    return new_clean_name.lower()
+    return new_clean_name.lower().strip()
 
 
 def remove_dot_unity(scene_name):
