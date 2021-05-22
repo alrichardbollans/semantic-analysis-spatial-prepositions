@@ -26,9 +26,10 @@ from sklearn.cluster import KMeans
 # Modules for plotting
 import matplotlib as mpl
 
-from basic_model_testing import GeneratePrepositionModelParameters, SemanticMethods, PrototypeModel
+from Analysis.neural_models import NeuralNetworkCategorisationModel
+from baseline_model_testing import GeneratePrepositionModelParameters, SemanticMethods, PrototypeModel, PREPOSITION_LIST
 from Analysis.performance_test_functions import ModelGenerator, TestModels, MultipleRuns, Model, polysemy_scores_folder, \
-    polysemy_scores_all_preps_folder
+    polysemy_scores_all_preps_folder, compare_models
 from data_import import Configuration, StudyInfo
 from compile_instances import SemanticCollection, ComparativeCollection
 
@@ -662,6 +663,123 @@ class DistinctPrototypePolysemyModel(PolysemyModel):
             mean_df.to_csv(base_folder + self.get_datafolder_csv(preposition, "means"))
 
 
+class DistinctPrototypeSupervisedPolysemyModel(DistinctPrototypePolysemyModel):
+    # I think the differnce from above is that this isn't oversampled.
+    # And it uses all scenes as train and validation.
+    def __init__(self, name, train_scenes, test_scenes, study_info_, baseline_model: PrototypeModel,
+                 test_prepositions=preposition_list,
+                 preserve_empty_polysemes=False,
+                 features_to_remove=None):
+
+        DistinctPrototypePolysemyModel.__init__(self, name, train_scenes, test_scenes, study_info_,
+                                                test_prepositions=test_prepositions,
+                                                preserve_empty_polysemes=preserve_empty_polysemes,
+                                                baseline_model=baseline_model, features_to_remove=features_to_remove,
+                                                oversample=False)
+
+    def refine_ideal_meaning(self, preposition, original_salient_features):
+        """
+        Refines the ideal meaning by testing a validation set.
+        Outputs new list of polysemes for the model
+        :param preposition:
+        :param original_salient_features:
+        :return:
+        """
+        if preposition in self.test_prepositions:
+            new_salient_features = []
+
+            # Each of the salient features are proportions so we use these values
+
+            train_scenes = self.train_scenes
+            validation_scenes = self.train_scenes
+
+            # TODO: change this to test all combinations?
+            values_to_try_dict = dict()
+            best_values_dict = dict()
+            for f in original_salient_features:
+                g_values_to_try = [0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+                l_values_to_try = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+                if f.name == "horizontal_distance":
+                    g_values_to_try = [0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
+                    l_values_to_try = g_values_to_try
+                if f.name == "contact_proportion":
+                    g_values_to_try = l_values_to_try
+                if f.gorl == "l":
+                    values_to_try = l_values_to_try.copy()
+                else:
+                    values_to_try = g_values_to_try.copy()
+                values_to_try_dict[f] = []
+                [values_to_try_dict[f].append(self.feature_processer.convert_normal_value_to_standardised(f.name, v))
+                 for v
+                 in values_to_try]
+
+            for f in original_salient_features:
+
+                best_value = None
+                best_score = 0
+                for v in values_to_try_dict[f]:
+                    # Convert to standardised values
+                    v = self.feature_processer.convert_normal_value_to_standardised(f.name, v)
+
+                    total = self.test_ideal_feature_value(train_scenes, validation_scenes, preposition,
+                                                          original_salient_features, f.name, v)
+
+                    if total > best_score:
+                        best_score = total
+                        best_value = v
+
+                if best_value is None:
+                    raise ValueError("best_value unassigned")
+
+                # The original feature is updated, which is better for training the next feature
+                f.value = best_value
+                new_salient_features.append(f)
+            new_polysemes = self.generate_polysemes(preposition, new_salient_features)
+            return new_polysemes
+        else:
+            return None
+
+    def test_ideal_feature_value(self, train_scenes, validation_scenes, preposition, original_salient_features, feature,
+                                 value):
+        """
+        Generates new polysemes for the model from the given feature and value,
+        then tests on given test scenes.
+        :param train_scenes:
+        :param preposition:
+        :param original_salient_features:
+        :param feature:
+        :param value:
+        :return:
+        """
+
+        # First update the salient features
+        new_salient_features = []
+        for f in original_salient_features:
+            new_f = copy.deepcopy(f)
+            if new_f.name == feature:
+                new_f.value = value
+            new_salient_features.append(new_f)
+
+        # Create new polysemes
+        new_polysemes = self.generate_polysemes(preposition, new_salient_features, train_scenes=train_scenes)
+        # The polyseme dict is updated here so that the model score can be calculated
+
+        self.polyseme_dict[preposition] = new_polysemes
+
+        all_constraints = self.constraint_dict[preposition]
+        # Constraints to test on
+        test_constraints = []
+
+        for c in all_constraints:
+            if c.scene in validation_scenes:
+                test_constraints.append(c)
+
+        # Get score for preposition
+        score_two = self.weighted_score(test_constraints)
+
+        return score_two
+
+
 class KMeansPolysemyModel(PolysemyModel):
     name = "KMeans Model"
     cluster_numbers = {'on': 8, 'in': 4, 'under': 4, 'over': 4, 'inside': 2, 'on top of': 4, 'below': 4, 'above': 4,
@@ -833,7 +951,7 @@ class GeneratePolysemeModels(ModelGenerator):
     distinct_model_name = "Distinct Prototype"
     shared_model_name = "Shared Prototype"
 
-    # distinct_refined_model_name = "Refined Distinct Model"
+    distinct_supervised_model_name = "Supervised Distinct Model"
     # shared_refined_model_name = "Refined Shared Model"
 
     # distinct_median_model_name = "Median Distinct Model"
@@ -844,7 +962,7 @@ class GeneratePolysemeModels(ModelGenerator):
 
     our_model_name = distinct_model_name
 
-    def __init__(self, train_scenes, test_scenes, study_info_, test_prepositions=polysemous_preposition_list,
+    def __init__(self, train_scenes, test_scenes, study_info_, test_prepositions=None,
                  preserve_empty_polysemes=False):
         """Summary
         
@@ -885,6 +1003,10 @@ class GeneratePolysemeModels(ModelGenerator):
         self.baseline_model.name = self.baseline_model_name
         self.baseline_model.unsatisfied_constraints_csv = self.baseline_model.study_info.name + "/polysemy/unsatisfied constraints/" + self.baseline_model.name + ".csv"
 
+        self.neural_categorisation = NeuralNetworkCategorisationModel(self.preposition_parameters_dict,
+                                                                      self.test_scenes,
+                                                                      self.study_info)
+
         self.cluster_model = KMeansPolysemyModel(self.preposition_parameters_dict, self.test_scenes, self.study_info,
                                                  test_prepositions=self.test_prepositions)
 
@@ -894,15 +1016,20 @@ class GeneratePolysemeModels(ModelGenerator):
                                                          preserve_empty_polysemes=self.preserve_empty_polysemes,
                                                          baseline_model=self.baseline_model,
                                                          features_to_remove=self.features_to_remove)
+
+        self.distinct_supervised_model = DistinctPrototypeSupervisedPolysemyModel(self.distinct_supervised_model_name,
+                                                                                  train_scenes, test_scenes,
+                                                                                  self.study_info,
+                                                                                  self.baseline_model,
+                                                                                  test_prepositions=self.test_prepositions,
+                                                                                  features_to_remove=self.features_to_remove)
+
         # # To avoid repeating computations make a copy of non-shared and edit attributes.
         # self.shared = copy.deepcopy(self.non_shared)
         # self.shared.name = GeneratePolysemeModels.shared_model_name
         # self.shared.polyseme_dict = self.shared.get_shared_prototype_polyseme_dict(self.shared.polyseme_dict)
 
-        self.models = [self.non_shared, self.baseline_model, self.cluster_model]
-        self.model_name_list = []
-        for m in self.models:
-            self.model_name_list.append(m.name)
+        self.generate_model_lists()
 
 
 def output_all_polyseme_info(study_info_):
@@ -917,62 +1044,21 @@ def output_all_polyseme_info(study_info_):
     generated_polyseme_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info_,
                                                        preserve_empty_polysemes=True)
     generated_polyseme_models.non_shared.output_polyseme_info()
+    generated_polyseme_models.distinct_supervised_model.output_polyseme_info()
 
 
-def test_on_all_scenes(study_info_):
-    """Summary
-    :param study_info_:
-    
-    Args:
-        study_info_ (TYPE): Description
-    """
-    print("test on all scenes")
-
-    all_scenes = study_info_.scene_name_list
-    generated_polyseme_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info_)
-
-    p_models = generated_polyseme_models.models
-
-    t = TestModels(p_models, "all")
-    all_dataframe = t.score_dataframe.copy()
-
-    all_dataframe.to_csv(study_info_.polysemy_score_folder + "all_test.csv")
-    print(all_dataframe)
-
-
-def test_model(runs, k, study_info_):
-    """Summary
-    
-    Args:
-        runs (TYPE): Description
-        k (TYPE): Description
-        study_info_ (TYPE): Description
-        :param study_info_:
-    """
-    m = MultipleRuns(GeneratePolysemeModels, study_info_.polysemy_score_folder + "tables",
-                     study_info.polysemy_score_folder + "plots", study_info_, number_runs=runs, k=k,
-                     compare="y", test_prepositions=polysemous_preposition_list)
-    print(("Test Model k = " + str(k)))
-    m.validation()
-    m.output()
-    print((m.average_dataframe))
-
-
-def test_models(study_info_):
+def test_models():
     """Summary
     
     Args:
         study_info_ (TYPE): Description
     """
-    mpl.rcParams['font.size'] = 40
-    mpl.rcParams['legend.fontsize'] = 37
-    mpl.rcParams['axes.titlesize'] = 'medium'
-    mpl.rcParams['axes.labelsize'] = 'medium'
-    mpl.rcParams['ytick.labelsize'] = 'small'
 
-    test_on_all_scenes(study_info_)
-    test_model(1, 2, study_info_)
-    test_model(10, 10, study_info_)
+    compare_models(10, 10, GeneratePolysemeModels, polysemy_scores_folder, test_prepositions=polysemous_preposition_list)
+
+
+def test_all_prepositions():
+    compare_models(10, 10, GeneratePolysemeModels, polysemy_scores_all_preps_folder, test_prepositions=PREPOSITION_LIST)
 
 
 def output_typicality(study_info_):
@@ -993,7 +1079,7 @@ def output_typicality(study_info_):
             model.output_typicalities(preposition)
 
 
-def main(study_info_):
+def main():
     """Un/comment functions to run tests and outputs
     
     Args:
@@ -1003,16 +1089,16 @@ def main(study_info_):
     Deleted Parameters:
         constraint_dict (TYPE): Description
     """
+    study_info = StudyInfo("2019 study")
     # output_all_polyseme_info(study_info_)
     # Clustering
 
     # Polysemes and performance
 
     # output_typicality(study_info_)
-    test_models(study_info_)
+    test_models()
+    # test_all_prepositions()
 
 
 if __name__ == '__main__':
-    study_info = StudyInfo("2019 study")
-
-    main(study_info)
+    main()

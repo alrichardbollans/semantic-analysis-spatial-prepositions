@@ -13,7 +13,7 @@ from Analysis.classes import Constraint
 
 from Analysis.data_import import Configuration, StudyInfo
 
-preposition_list = StudyInfo.preposition_list
+PREPOSITION_LIST = StudyInfo.preposition_list
 
 basic_model_scores_folder = "model evaluation/basic scores"
 polysemy_scores_folder = "model evaluation/polysemy"
@@ -27,7 +27,7 @@ class Model:
     """
 
     # Puts together preposition models and has various functions for testing
-    def __init__(self, name, test_scenes, study_info_, test_prepositions=preposition_list,
+    def __init__(self, name, test_scenes, study_info_, test_prepositions=PREPOSITION_LIST,
                  constraint_csv_removed_users=None):
         """Summary
 
@@ -294,7 +294,7 @@ class MultipleRuns:
     # This class carries out multiple runs of model tests and outputs the results
     # Number of runs must be specified as well as k for repeated k-fold sampling
     def __init__(self, model_generator, scores_tables_folder, scores_plots_folder, study_info_,
-                 number_runs=None,
+                 number_runs=None, test_prepositions=None,
                  k=None, compare=None, features_to_test=None):
         """Summary
 
@@ -303,7 +303,10 @@ class MultipleRuns:
         """
 
         self.study_info = study_info_
-
+        if test_prepositions is not None:
+            self.test_prepositions = test_prepositions
+        else:
+            self.test_prepositions = PREPOSITION_LIST
 
         self.model_generator = model_generator
 
@@ -330,7 +333,6 @@ class MultipleRuns:
         ## Model names being tested. Gets from GenerateModels instance as models being tested depends on instance.
         self.model_name_list = self.Generate_Models_all_scenes.model_name_list
         self.constraint_dict = self.Generate_Models_all_scenes.models[0].constraint_dict
-        self.test_prepositions = self.Generate_Models_all_scenes.test_prepositions
 
         self.prepare_comparison_dicts()
         # overall_folds_dict contains overall scores on each fold for each model
@@ -780,8 +782,7 @@ class MultipleRuns:
         self.plot_dataframe_bar_chart(dataset, file_to_save, x_label, y_label, plot_title)
 
 
-def compare_models(runs, k, model_generator, base_output_folder,test_prepositions = None):
-
+def compare_models(runs, k, model_generator, base_output_folder, test_prepositions=PREPOSITION_LIST):
     study_info = StudyInfo("2019 study")
 
     m = MultipleRuns(model_generator, base_output_folder + "/tables",
