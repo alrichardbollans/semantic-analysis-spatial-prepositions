@@ -3,9 +3,9 @@ This file provides classes for generating models of typicality and running tests
 First run compile_instances.py
 
 Attributes:
-    comp_filetag (TYPE): Description
-    preposition_list (TYPE): Description
-    sv_filetag (TYPE): Description
+    COMP_FILETAG (TYPE): Description
+    PREPOSITION_LIST (TYPE): Description
+    SV_FILETAG (TYPE): Description
 """
 
 # Standard imports
@@ -30,11 +30,11 @@ from compile_instances import InstanceCollection, SemanticCollection, Comparativ
 from data_import import Configuration, StudyInfo
 
 # Useful global variables
-sv_filetag = SemanticCollection.filetag  # Tag for sv task files
-comp_filetag = ComparativeCollection.filetag  # Tag for comp task files
-preposition_list = StudyInfo.preposition_list
+SV_FILETAG = SemanticCollection.filetag  # Tag for sv task files
+COMP_FILETAG = ComparativeCollection.filetag  # Tag for comp task files
+PREPOSITION_LIST = StudyInfo.preposition_list
 
-basic_model_property_folder = "model info/basic"
+BASIC_MODEL_PROPERTY_FOLDER = "model info/basic"
 
 def rename_feature(feature):
     # Rename some features
@@ -185,7 +185,7 @@ class GeneratePrepositionModelParameters:
         # Row is created in dataset only if the configuration was tested
         # Set of values with selection information
         # Only includes configurations that were tested at least once
-        config_ratio_csv = self.study_info.config_ratio_csv(sv_filetag, preposition)
+        config_ratio_csv = self.study_info.config_ratio_csv(SV_FILETAG, preposition)
         if given_dataset is None:
             self.dataset = pd.read_csv(config_ratio_csv)
         else:
@@ -266,7 +266,7 @@ class GeneratePrepositionModelParameters:
         # prototype calculated using regression. Stored as array
         self.prototype = []
 
-        self.prototype_csv = basic_model_property_folder + "/prototypes/" + preposition + ".csv"
+        self.prototype_csv = BASIC_MODEL_PROPERTY_FOLDER + "/prototypes/" + preposition + ".csv"
 
         # regression weights calculated by linear regression. stored as array and dataframe
         self.poly_regression_model = None
@@ -276,8 +276,8 @@ class GeneratePrepositionModelParameters:
         self.ridge_regression_model = None
 
         self.regression_weights = []
-        self.regression_weight_csv = basic_model_property_folder + "/regression weights/" + preposition + ".csv"
-        self.all_features_regression_weight_csv = basic_model_property_folder + "/regression weights/allfeatures_" + preposition + ".csv"
+        self.regression_weight_csv = BASIC_MODEL_PROPERTY_FOLDER + "/regression weights/" + preposition + ".csv"
+        self.all_features_regression_weight_csv = BASIC_MODEL_PROPERTY_FOLDER + "/regression weights/allfeatures_" + preposition + ".csv"
 
         # Stores model predictions for later plotting
         self.interval_predictions = dict()
@@ -285,12 +285,12 @@ class GeneratePrepositionModelParameters:
         # barycentre_prototype . stored as array
         self.barycentre_prototype = None
 
-        self.barycentre_csv = basic_model_property_folder + "/barycentre model/" + preposition + "-prototype.csv"
+        self.barycentre_csv = BASIC_MODEL_PROPERTY_FOLDER + "/barycentre model/" + preposition + "-prototype.csv"
 
         # exemplar_mean . stored as array
         self.exemplar_mean = None
 
-        self.exemplar_csv = basic_model_property_folder + "/exemplar/" + preposition + "-exemplar_means.csv"
+        self.exemplar_csv = BASIC_MODEL_PROPERTY_FOLDER + "/exemplar/" + preposition + "-exemplar_means.csv"
 
     def remove_nontrainingscenes(self, d):
         """Summary
@@ -691,7 +691,7 @@ class GeneratePrepositionModelParameters:
             filename = self.polyseme.plot_folder + self.preposition + "-" + self.polyseme.polyseme_name + x + ' .pdf'
         else:
 
-            filename = basic_model_property_folder + "/plots/" + self.preposition + x + ".pdf"
+            filename = BASIC_MODEL_PROPERTY_FOLDER + "/plots/" + self.preposition + x + ".pdf"
         return filename
 
     def plot_models(self, base_folder=None):
@@ -739,7 +739,7 @@ class GeneratePrepositionModelParameters:
         fig.tight_layout()
         fig.canvas.set_window_title('Ratio vs. Feature')
         self.plot_features_ratio_to_axis(feature, axes)
-        filename = basic_model_property_folder + "/plots/individual features/" + self.preposition + feature + ".pdf"
+        filename = BASIC_MODEL_PROPERTY_FOLDER + "/plots/individual features/" + self.preposition + feature + ".pdf"
         plt.savefig(filename, bbox_inches='tight')
         plt.close(fig)
 
@@ -810,7 +810,7 @@ class GeneratePrepositionModelParameters:
                    fontsize=15)
 
         # plt.title("Instances of '" + self.preposition + "'")
-        filename = basic_model_property_folder + "/plots/feature spaces/" + self.preposition + feature1 + feature2 + ".pdf"
+        filename = BASIC_MODEL_PROPERTY_FOLDER + "/plots/feature spaces/" + self.preposition + feature1 + feature2 + ".pdf"
         plt.savefig(filename, bbox_inches='tight')
         plt.clf()
 
@@ -819,12 +819,12 @@ class PrototypeModel(Model):
     name = "Our Prototype"
 
     def __init__(self, preposition_model_dict: Dict[str, GeneratePrepositionModelParameters], test_scenes,
-                 study_info_: StudyInfo, test_prepositions=preposition_list,
+                 study_info_: StudyInfo, test_prepositions=PREPOSITION_LIST,
                  constraint_csv_removed_users=None):
         self.preposition_model_dict = preposition_model_dict
 
         if len(test_scenes) < len(study_info_.scene_name_list):
-            for p in preposition_list:
+            for p in PREPOSITION_LIST:
                 train_scenes = set(self.preposition_model_dict[p].train_scenes)
                 if (any(x in train_scenes for x in test_scenes)):
                     raise ValueError("Train and test scene overlap.")
@@ -1042,7 +1042,7 @@ class GenerateBasicModels(ModelGenerator):
 
     # Generating models to test
     def __init__(self, train_scenes, test_scenes, study_info_, extra_features_to_remove=None, only_test_our_model=None,
-                 test_prepositions=preposition_list):
+                 test_prepositions=PREPOSITION_LIST):
         """Summary
         
 
@@ -1066,37 +1066,29 @@ class GenerateBasicModels(ModelGenerator):
 
         self.preposition_parameters_dict = preposition_models_dict
 
-        our_model = PrototypeModel(preposition_models_dict, self.test_scenes, self.study_info)
+        self.our_model = PrototypeModel(preposition_models_dict, self.test_scenes, self.study_info)
 
         if only_test_our_model is None:
 
-            exemplar_model = ExemplarModel(preposition_models_dict, self.test_scenes, self.study_info)
-            cs_model = CSModel(preposition_models_dict, self.test_scenes, self.study_info)
-            proximity_model = ProximityModel(self.test_scenes, self.study_info)
-            simple_model = SimpleModel(self.test_scenes, self.study_info)
-            best_guess_model = BestGuessModel(self.test_scenes, self.study_info)
-
-            models = [our_model, exemplar_model, cs_model, proximity_model, simple_model, best_guess_model]
-
-        else:
-
-            models = [our_model]
-
-        self.models = models
-        self.model_name_list = []
-        for m in self.models:
-            self.model_name_list.append(m.name)
+            self.exemplar_model = ExemplarModel(preposition_models_dict, self.test_scenes, self.study_info)
+            self.cs_model = CSModel(preposition_models_dict, self.test_scenes, self.study_info)
+            self.proximity_model = ProximityModel(self.test_scenes, self.study_info)
+            self.simple_model = SimpleModel(self.test_scenes, self.study_info)
+            self.best_guess_model = BestGuessModel(self.test_scenes, self.study_info)
 
 
-def get_standard_preposition_parameters():
+        self.generate_model_lists()
+
+
+def get_standard_preposition_parameters(train_scenes):
     model_study_info = StudyInfo("2019 study")
-    scene_list = model_study_info.scene_name_list
+    # scene_list = model_study_info.scene_name_list
     preposition_models_dict = dict()
 
     features_to_remove = Configuration.object_specific_features.copy()
     # Get parameters for each preposition
-    for p in preposition_list:
-        M = GeneratePrepositionModelParameters(model_study_info, p, scene_list,
+    for p in PREPOSITION_LIST:
+        M = GeneratePrepositionModelParameters(model_study_info, p, train_scenes,
                                                features_to_remove=features_to_remove)
         M.work_out_models()
         preposition_models_dict[p] = M
@@ -1206,12 +1198,7 @@ def main(study_info_):
         study_info_ (StudyInfo): Description
     """
 
-    # # Edit plot settings
-    mpl.rcParams['font.size'] = 40
-    mpl.rcParams['legend.fontsize'] = 37
-    mpl.rcParams['axes.titlesize'] = 'medium'
-    mpl.rcParams['axes.labelsize'] = 'medium'
-    mpl.rcParams['ytick.labelsize'] = 'small'
+
     # plot_all_csv(study_info_)
     # 
     initial_test(study_info_)
