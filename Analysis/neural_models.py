@@ -11,9 +11,7 @@ from tensorflow import keras
 from typing import Dict
 
 from Analysis.data_import import StudyInfo, Configuration
-from Analysis.extra_thesis_cat_typ import SelectionRatioModel, ConservativeSelectionRatioModel
 from Analysis.performance_test_functions import MultipleRuns, ModelGenerator, TestModels, Model, compare_models
-from Analysis.polysemy_analysis import DistinctPrototypePolysemyModel, Polyseme
 from baseline_model_testing import GeneratePrepositionModelParameters, GenerateBasicModels, PREPOSITION_LIST, \
     PrototypeModel, get_standard_preposition_parameters
 
@@ -391,7 +389,6 @@ def main():
     # verify_sup_model()
 
     #
-    # initial_test()
     test_neural_models(10, 10)
 
 
