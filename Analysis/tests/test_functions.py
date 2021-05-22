@@ -1,11 +1,10 @@
 import filecmp
 import pandas as pd
 
-from Analysis.add_additional_features import additional_features
-
 output_folder = "tests/test outputs/"
 archive_folder = "tests/archive folder/"
 
+additional_features = ["figure_lightsource","figure_container"]
 new_features_not_in_archive = additional_features + ['size_ratio']
 
 

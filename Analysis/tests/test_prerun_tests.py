@@ -9,7 +9,7 @@ import tensorflow as tf
 
 sys.path.append('../')
 
-from Analysis.add_additional_features import clean_name
+from Analysis.data_import import clean_name
 from Analysis.performance_test_functions import Model
 from Analysis.baseline_model_testing import PREPOSITION_LIST, GeneratePrepositionModelParameters
 from Analysis.classes import Constraint

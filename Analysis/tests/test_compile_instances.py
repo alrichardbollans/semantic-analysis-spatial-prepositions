@@ -2,7 +2,6 @@ import os
 import unittest
 import sys
 
-from Analysis.add_additional_features import additional_features
 
 sys.path.append('../')
 

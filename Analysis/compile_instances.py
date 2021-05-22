@@ -14,7 +14,6 @@ import csv
 import numpy as np
 
 import preprocess_features
-from Analysis.add_additional_features import add_properties_to_relation_file
 from classes import Instance, CompInstance, Comparison
 from process_data import SemanticAnnotation, ComparativeAnnotation
 from data_import import SimpleConfiguration, Configuration, StudyInfo
@@ -577,8 +576,7 @@ class ConfigurationCollection(Collection):
 
 if __name__ == '__main__':
     study_info = StudyInfo("2019 study")
-    # first add additional features (if any)
-    add_properties_to_relation_file(study_info)
+
     # First preprocess features
     preprocess_features.process_all_features(study_info)
 
