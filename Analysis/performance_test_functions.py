@@ -4,6 +4,7 @@ import time
 
 import numpy as np
 import pandas as pd
+import matplotlib as mpl
 from matplotlib import pyplot as plt
 from scipy.stats import wilcoxon
 from sklearn.model_selection import train_test_split
@@ -293,7 +294,7 @@ class MultipleRuns:
     # This class carries out multiple runs of model tests and outputs the results
     # Number of runs must be specified as well as k for repeated k-fold sampling
     def __init__(self, model_generator, scores_tables_folder, scores_plots_folder, study_info_,
-                 test_prepositions=preposition_list, number_runs=None,
+                 number_runs=None,
                  k=None, compare=None, features_to_test=None):
         """Summary
 
@@ -302,7 +303,7 @@ class MultipleRuns:
         """
 
         self.study_info = study_info_
-        self.test_prepositions = test_prepositions
+
 
         self.model_generator = model_generator
 
@@ -329,6 +330,7 @@ class MultipleRuns:
         ## Model names being tested. Gets from GenerateModels instance as models being tested depends on instance.
         self.model_name_list = self.Generate_Models_all_scenes.model_name_list
         self.constraint_dict = self.Generate_Models_all_scenes.models[0].constraint_dict
+        self.test_prepositions = self.Generate_Models_all_scenes.test_prepositions
 
         self.prepare_comparison_dicts()
         # overall_folds_dict contains overall scores on each fold for each model
@@ -682,6 +684,12 @@ class MultipleRuns:
     def output(self):
         """Summary
         """
+        # # Edit plot settings
+        mpl.rcParams['font.size'] = 40
+        mpl.rcParams['legend.fontsize'] = 37
+        mpl.rcParams['axes.titlesize'] = 'medium'
+        mpl.rcParams['axes.labelsize'] = 'medium'
+        mpl.rcParams['ytick.labelsize'] = 'small'
         # Handle outputting here so we're not always outputting
         self.average_dataframe = self.dataframe_dict["all_features"]
         # Reorder columns for output
@@ -772,11 +780,12 @@ class MultipleRuns:
         self.plot_dataframe_bar_chart(dataset, file_to_save, x_label, y_label, plot_title)
 
 
-def compare_models(runs, k, model_generator, base_output_folder):
+def compare_models(runs, k, model_generator, base_output_folder,test_prepositions = None):
+
     study_info = StudyInfo("2019 study")
 
-    m = MultipleRuns(model_generator, base_output_folder,
-                     base_output_folder, study_info, test_prepositions=preposition_list,
+    m = MultipleRuns(model_generator, base_output_folder + "/tables",
+                     base_output_folder + "/plots", study_info, test_prepositions=test_prepositions,
                      number_runs=runs,
                      k=k,
                      compare="y")
@@ -785,7 +794,7 @@ def compare_models(runs, k, model_generator, base_output_folder):
     t = TestModels(models_to_test, "all")
     all_dataframe = t.score_dataframe.copy()
     print(all_dataframe)
-    all_dataframe.to_csv(base_output_folder + "/initial_test.csv")
+    all_dataframe.to_csv(base_output_folder + "/tables/initial_test.csv")
 
     print(("Test Model k = " + str(k)))
     m.validation()
