@@ -1,4 +1,0 @@
-,Distinct Prototype,Baseline Model,KMeans Model
-p_value,0,1.267006625513919e-06,0.004335890948158567
-Our model wins,0,66.0,49.0
-Other model wins,0,27.0,36.0
