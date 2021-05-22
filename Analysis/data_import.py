@@ -170,7 +170,7 @@ class StudyInfo:
         name (TYPE): Description
         polyseme_data_folder (TYPE): Description
         polysemy_score_folder (TYPE): Description
-        preposition_list (list): Description
+        PREPOSITION_LIST (list): Description
         project_path (TYPE): Description
         raw_annotation_csv (TYPE): Description
         raw_user_csv (TYPE): Description

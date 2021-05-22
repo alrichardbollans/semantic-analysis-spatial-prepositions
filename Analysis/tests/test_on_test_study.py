@@ -5,7 +5,7 @@ import pandas as pd
 sys.path.append('../')
 
 from Analysis.compile_instances import SemanticCollection
-from Analysis.basic_model_testing import preposition_list, GeneratePrepositionModelParameters
+from Analysis.baseline_model_testing import PREPOSITION_LIST, GeneratePrepositionModelParameters
 
 from Analysis.process_data import *
 

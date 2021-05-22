@@ -3,6 +3,7 @@
 import os
 import unittest
 import sys
+import tensorflow as tf
 
 
 
@@ -10,7 +11,7 @@ sys.path.append('../')
 
 from Analysis.add_additional_features import clean_name
 from Analysis.performance_test_functions import Model
-from Analysis.basic_model_testing import preposition_list, GeneratePrepositionModelParameters
+from Analysis.baseline_model_testing import PREPOSITION_LIST, GeneratePrepositionModelParameters
 from Analysis.classes import Constraint
 from Analysis.compile_instances import *
 
@@ -185,6 +186,7 @@ class MyTestCase(unittest.TestCase):
     def test_specs(self):
 
         self.assertEqual(pd.__version__, '1.0.3')
+        self.assertEqual(tf.__version__,'2.4.0')
 
     def test_remove_features(self):
         study_info = StudyInfo("2019 study")
@@ -197,12 +199,12 @@ class MyTestCase(unittest.TestCase):
         preposition_models_dict = dict()
 
         # Get parameters for each preposition
-        for p in preposition_list:
+        for p in PREPOSITION_LIST:
             M = GeneratePrepositionModelParameters(study_info, p, scene_list,
                                                    features_to_remove=features_to_remove)
             preposition_models_dict[p] = M
 
-        for p in preposition_list:
+        for p in PREPOSITION_LIST:
 
 
             for idx, row in preposition_models_dict[p].allFeatures.iterrows():

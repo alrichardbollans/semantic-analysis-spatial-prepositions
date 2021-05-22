@@ -1,6 +1,6 @@
 import matplotlib as mpl
 
-from Analysis.baseline_model_testing import GenerateBasicModels, preposition_list
+from Analysis.baseline_model_testing import GenerateBasicModels, PREPOSITION_LIST
 from Analysis.data_import import StudyInfo
 
 
@@ -39,7 +39,7 @@ def plot_preposition_graphs(study_info):
     scene_list = study_info.scene_name_list
     generated_models = GenerateBasicModels(scene_list, scene_list, study_info)
 
-    for p in preposition_list:
+    for p in PREPOSITION_LIST:
 
         M = generated_models.preposition_parameters_dict[p]
         M.output_models()

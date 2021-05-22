@@ -270,7 +270,7 @@ class SemanticCollection(InstanceCollection):
         filetag (str): Description
     
     Deleted Attributes:
-        preposition_list (list): Description
+        PREPOSITION_LIST (list): Description
     """
 
     filetag = 'semantic'

@@ -125,7 +125,7 @@ class Test(unittest.TestCase):
 
         all_feature_keys = without_lc_model.preposition_model_dict['in'].all_feature_keys
 
-        for p in preposition_list:
+        for p in PREPOSITION_LIST:
             for feature in all_feature_keys:
                 if feature == "location_control" or feature in Configuration.object_specific_features.copy():
                     self.assertEqual(
@@ -137,7 +137,7 @@ class Test(unittest.TestCase):
                         without_sup_model.preposition_model_dict[p].regression_weights[all_feature_keys.index(feature)],
                         0)
 
-        for p in preposition_list:
+        for p in PREPOSITION_LIST:
             lc_test_array = without_lc_model.preposition_model_dict[p].prototype.copy()
             lc_test_array[all_feature_keys.index("location_control")] += -5
 

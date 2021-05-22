@@ -14,7 +14,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
-from basic_model_testing import GeneratePrepositionModelParameters, preposition_list
+from baseline_model_testing import GeneratePrepositionModelParameters, PREPOSITION_LIST
 from Analysis.data_import import Features
 from data_import import Configuration, StudyInfo
 from extra_thesis_polysemy import GenerateAdditionalModels
@@ -461,7 +461,7 @@ def output_clustering_info(study_info_):
                                                          preserve_empty_polysemes=True)
     mpl.rcParams['font.size'] = 15
     mpl.rcParams['legend.fontsize'] = 12
-    for preposition in preposition_list:
+    for preposition in PREPOSITION_LIST:
         c = Clustering(study_info_, preposition, generated_polysemy_models=generated_polysemy_models)
 
         c.plot_elbow_polyseme_inertia()
@@ -485,7 +485,7 @@ def work_out_all_hry_clusters(study_info_):
     # generated_polysemy_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info_,
     # preserve_empty_polysemes=True)
     print("Working out hry clusters")
-    for preposition in preposition_list:
+    for preposition in PREPOSITION_LIST:
         print(preposition)
         c = Clustering(study_info_, preposition)
         c.work_out_hierarchy_model()
