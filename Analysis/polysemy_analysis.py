@@ -1005,7 +1005,7 @@ class GeneratePolysemeModels(ModelGenerator):
 
         self.neural_categorisation = NeuralNetworkCategorisationModel(self.preposition_parameters_dict,
                                                                       self.test_scenes,
-                                                                      self.study_info)
+                                                                      self.study_info,test_prepositions=self.test_prepositions)
 
         self.cluster_model = KMeansPolysemyModel(self.preposition_parameters_dict, self.test_scenes, self.study_info,
                                                  test_prepositions=self.test_prepositions)

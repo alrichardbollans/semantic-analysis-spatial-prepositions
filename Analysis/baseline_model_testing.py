@@ -823,14 +823,16 @@ class PrototypeModel(Model):
                  constraint_csv_removed_users=None):
         self.preposition_model_dict = preposition_model_dict
 
-        if len(test_scenes) < len(study_info_.scene_name_list):
-            for p in PREPOSITION_LIST:
-                train_scenes = set(self.preposition_model_dict[p].train_scenes)
-                if (any(x in train_scenes for x in test_scenes)):
-                    raise ValueError("Train and test scene overlap.")
+
 
         Model.__init__(self, PrototypeModel.name, test_scenes, study_info_, test_prepositions=test_prepositions,
                        constraint_csv_removed_users=constraint_csv_removed_users)
+
+        if len(test_scenes) < len(study_info_.scene_name_list):
+            for p in self.test_prepositions:
+                train_scenes = set(self.preposition_model_dict[p].train_scenes)
+                if (any(x in train_scenes for x in test_scenes)):
+                    raise ValueError("Train and test scene overlap.")
 
     def get_typicality(self, preposition, value_array, scene=None, figure=None, ground=None, study=None):
         p_model = self.preposition_model_dict[preposition]

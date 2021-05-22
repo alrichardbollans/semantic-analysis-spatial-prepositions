@@ -53,8 +53,8 @@ class NeuralNetworkCategorisationModel(Model):
     performance_metric = 'mean_squared_error'
 
     def __init__(self, preposition_model_dict: Dict[str, GeneratePrepositionModelParameters], test_scenes, study_info_,
-                 train_test_proportion=float(1), number_of_epochs=200, make_plots=False):
-        Model.__init__(self, self.name, test_scenes, study_info_)
+                 train_test_proportion=float(1), number_of_epochs=200, make_plots=False,test_prepositions=None):
+        Model.__init__(self, self.name, test_scenes, study_info_,test_prepositions = test_prepositions)
         self.models = dict()
         self.preposition_model_dict = preposition_model_dict
         self.training_data_dict = {}
@@ -63,7 +63,7 @@ class NeuralNetworkCategorisationModel(Model):
         self.train_test_proportion = train_test_proportion
         self.make_plots = make_plots
 
-        for p in PREPOSITION_LIST:
+        for p in self.test_prepositions:
 
             self.training_data_dict[p] = self.convert_train_dataframe_to_tfdataset(
                 preposition_model_dict[p].train_dataset, p)
@@ -169,8 +169,8 @@ class SupervisedNeuralTypicalityModel(Model):
     # This model will take constraint dict as input and train to guess correct configuration.
 
     def __init__(self, train_scenes, test_scenes, study_info_, features_to_remove, train_test_proportion=float(1),
-                 number_of_epochs=200, make_plots=False):
-        Model.__init__(self, self.name, test_scenes, study_info_)
+                 number_of_epochs=200, make_plots=False,test_prepositions=None):
+        Model.__init__(self, self.name, test_scenes, study_info_,test_prepositions=test_prepositions)
         self.models = dict()
         self.train_scenes = train_scenes
         self.features_to_remove = features_to_remove
@@ -182,7 +182,7 @@ class SupervisedNeuralTypicalityModel(Model):
         self.train_datasets = dict()
         self.callbacks = None
 
-        for p in PREPOSITION_LIST:
+        for p in self.test_prepositions:
             self.train_datasets[p] = self.prepare_train_dataset(p)
             if self.train_test_proportion == 1:
                 train = self.train_datasets[p]
