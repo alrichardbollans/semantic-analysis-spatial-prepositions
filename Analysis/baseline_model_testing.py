@@ -25,7 +25,7 @@ from sklearn.linear_model import LinearRegression, Ridge
 # Local module imports
 from typing import Dict
 
-from Analysis.performance_test_functions import ModelGenerator, MultipleRuns, Model, basic_model_scores_folder
+from Analysis.performance_test_functions import ModelGenerator, MultipleRuns, Model, BASIC_MODEL_SCORES_FOLDER
 from compile_instances import InstanceCollection, SemanticCollection, ComparativeCollection
 from data_import import Configuration, StudyInfo
 
@@ -34,7 +34,8 @@ SV_FILETAG = SemanticCollection.filetag  # Tag for sv task files
 COMP_FILETAG = ComparativeCollection.filetag  # Tag for comp task files
 PREPOSITION_LIST = StudyInfo.preposition_list
 
-BASIC_MODEL_PROPERTY_FOLDER = "model info/basic"
+BASIC_MODEL_PROPERTY_FOLDER = "model info/basic/"
+
 
 def rename_feature(feature):
     # Rename some features
@@ -266,7 +267,7 @@ class GeneratePrepositionModelParameters:
         # prototype calculated using regression. Stored as array
         self.prototype = []
 
-        self.prototype_csv = BASIC_MODEL_PROPERTY_FOLDER + "/prototypes/" + preposition + ".csv"
+        self.prototype_csv = BASIC_MODEL_PROPERTY_FOLDER + "prototypes/" + preposition + ".csv"
 
         # regression weights calculated by linear regression. stored as array and dataframe
         self.poly_regression_model = None
@@ -276,8 +277,8 @@ class GeneratePrepositionModelParameters:
         self.ridge_regression_model = None
 
         self.regression_weights = []
-        self.regression_weight_csv = BASIC_MODEL_PROPERTY_FOLDER + "/regression weights/" + preposition + ".csv"
-        self.all_features_regression_weight_csv = BASIC_MODEL_PROPERTY_FOLDER + "/regression weights/allfeatures_" + preposition + ".csv"
+        self.regression_weight_csv = BASIC_MODEL_PROPERTY_FOLDER + "regression weights/" + preposition + ".csv"
+        self.all_features_regression_weight_csv = BASIC_MODEL_PROPERTY_FOLDER + "regression weights/allfeatures_" + preposition + ".csv"
 
         # Stores model predictions for later plotting
         self.interval_predictions = dict()
@@ -285,12 +286,12 @@ class GeneratePrepositionModelParameters:
         # barycentre_prototype . stored as array
         self.barycentre_prototype = None
 
-        self.barycentre_csv = BASIC_MODEL_PROPERTY_FOLDER + "/barycentre model/" + preposition + "-prototype.csv"
+        self.barycentre_csv = BASIC_MODEL_PROPERTY_FOLDER + "barycentre model/" + preposition + "-prototype.csv"
 
         # exemplar_mean . stored as array
         self.exemplar_mean = None
 
-        self.exemplar_csv = BASIC_MODEL_PROPERTY_FOLDER + "/exemplar/" + preposition + "-exemplar_means.csv"
+        self.exemplar_csv = BASIC_MODEL_PROPERTY_FOLDER + "exemplar/" + preposition + "-exemplar_means.csv"
 
     def remove_nontrainingscenes(self, d):
         """Summary
@@ -691,7 +692,7 @@ class GeneratePrepositionModelParameters:
             filename = self.polyseme.plot_folder + self.preposition + "-" + self.polyseme.polyseme_name + x + ' .pdf'
         else:
 
-            filename = BASIC_MODEL_PROPERTY_FOLDER + "/plots/" + self.preposition + x + ".pdf"
+            filename = BASIC_MODEL_PROPERTY_FOLDER + "plots/" + self.preposition + x + ".pdf"
         return filename
 
     def plot_models(self, base_folder=None):
@@ -739,7 +740,7 @@ class GeneratePrepositionModelParameters:
         fig.tight_layout()
         fig.canvas.set_window_title('Ratio vs. Feature')
         self.plot_features_ratio_to_axis(feature, axes)
-        filename = BASIC_MODEL_PROPERTY_FOLDER + "/plots/individual features/" + self.preposition + feature + ".pdf"
+        filename = BASIC_MODEL_PROPERTY_FOLDER + "plots/individual features/" + self.preposition + feature + ".pdf"
         plt.savefig(filename, bbox_inches='tight')
         plt.close(fig)
 
@@ -810,7 +811,7 @@ class GeneratePrepositionModelParameters:
                    fontsize=15)
 
         # plt.title("Instances of '" + self.preposition + "'")
-        filename = BASIC_MODEL_PROPERTY_FOLDER + "/plots/feature spaces/" + self.preposition + feature1 + feature2 + ".pdf"
+        filename = BASIC_MODEL_PROPERTY_FOLDER + "plots/feature spaces/" + self.preposition + feature1 + feature2 + ".pdf"
         plt.savefig(filename, bbox_inches='tight')
         plt.clf()
 
@@ -822,8 +823,6 @@ class PrototypeModel(Model):
                  study_info_: StudyInfo, test_prepositions=PREPOSITION_LIST,
                  constraint_csv_removed_users=None):
         self.preposition_model_dict = preposition_model_dict
-
-
 
         Model.__init__(self, PrototypeModel.name, test_scenes, study_info_, test_prepositions=test_prepositions,
                        constraint_csv_removed_users=constraint_csv_removed_users)
@@ -1071,13 +1070,11 @@ class GenerateBasicModels(ModelGenerator):
         self.our_model = PrototypeModel(preposition_models_dict, self.test_scenes, self.study_info)
 
         if only_test_our_model is None:
-
             self.exemplar_model = ExemplarModel(preposition_models_dict, self.test_scenes, self.study_info)
             self.cs_model = CSModel(preposition_models_dict, self.test_scenes, self.study_info)
             self.proximity_model = ProximityModel(self.test_scenes, self.study_info)
             self.simple_model = SimpleModel(self.test_scenes, self.study_info)
             self.best_guess_model = BestGuessModel(self.test_scenes, self.study_info)
-
 
         self.generate_model_lists()
 
@@ -1105,8 +1102,8 @@ def test_features(study_info_):
         study_info_ (TYPE): Description
     """
     functional_features = ["location_control", "support"]
-    m = MultipleRuns(GenerateBasicModels, basic_model_scores_folder + "/tables/removed features",
-                     basic_model_scores_folder + "/plots/removed features", study_info_, number_runs=100, k=2,
+    m = MultipleRuns(GenerateBasicModels, BASIC_MODEL_SCORES_FOLDER + "tables/removed features",
+                     BASIC_MODEL_SCORES_FOLDER + "plots/removed features", study_info_, number_runs=100, k=2,
                      features_to_test=functional_features)
     print("Test Features")
     m.validation()
@@ -1119,8 +1116,8 @@ def initial_test(study_info_):
     Args:
         study_info_ (TYPE): Description
     """
-    m = MultipleRuns(GenerateBasicModels, basic_model_scores_folder + "/tables/all features",
-                     basic_model_scores_folder + "/plots/all features", study_info_)
+    m = MultipleRuns(GenerateBasicModels, BASIC_MODEL_SCORES_FOLDER + "tables/all features",
+                     BASIC_MODEL_SCORES_FOLDER + "plots/all features", study_info_)
     print("Test on all scenes")
     m.test_all_scenes()
 
@@ -1131,8 +1128,8 @@ def test_models(study_info_):
     Args:
         study_info_ (TYPE): Description
     """
-    m = MultipleRuns(GenerateBasicModels, basic_model_scores_folder + "/tables/all features",
-                     basic_model_scores_folder + "/plots/all features", study_info_, number_runs=100, k=2, compare="y")
+    m = MultipleRuns(GenerateBasicModels, BASIC_MODEL_SCORES_FOLDER + "tables/all features",
+                     BASIC_MODEL_SCORES_FOLDER + "plots/all features", study_info_, number_runs=100, k=2, compare="y")
     print("Test Model k = 2")
     m.validation()
     m.output()
@@ -1149,8 +1146,8 @@ def plot_all_csv(study_info_):
     Args:
         study_info_ (TYPE): Description
     """
-    m = MultipleRuns(GenerateBasicModels, basic_model_scores_folder + "/tables/all features",
-                     basic_model_scores_folder + "/plots/all features", study_info_)
+    m = MultipleRuns(GenerateBasicModels, BASIC_MODEL_SCORES_FOLDER + "tables/all features",
+                     BASIC_MODEL_SCORES_FOLDER + "plots/all features", study_info_)
     file = m.all_csv
     out_file = m.all_plot
 
@@ -1165,8 +1162,8 @@ def plot_kfold_csv(k, study_info_):
         k (TYPE): Description
         study_info_ (TYPE): Description
     """
-    m = MultipleRuns(GenerateBasicModels, basic_model_scores_folder + "/tables/all features",
-                     basic_model_scores_folder + "/plots/all features", study_info_, number_runs=100, k=k)
+    m = MultipleRuns(GenerateBasicModels, BASIC_MODEL_SCORES_FOLDER + "tables/all features",
+                     BASIC_MODEL_SCORES_FOLDER + "plots/all features", study_info_, number_runs=100, k=k)
     file = m.average_csv
     out_file = m.average_plot_pdf
 
@@ -1181,8 +1178,8 @@ def plot_feature_csv(k, study_info_):
         study_info_ (TYPE): Description
     """
     functional_features = ["location_control", "support"]
-    m = MultipleRuns(GenerateBasicModels, basic_model_scores_folder + "/tables/removed features",
-                     basic_model_scores_folder + "/plots/removed features", study_info_, number_runs=100, k=k,
+    m = MultipleRuns(GenerateBasicModels, BASIC_MODEL_SCORES_FOLDER + "tables/removed features",
+                     BASIC_MODEL_SCORES_FOLDER + "plots/removed features", study_info_, number_runs=100, k=k,
                      features_to_test=functional_features)
     file = m.scores_tables_folder + "/functional_feature_analysis.csv"
     output_file = m.scores_plots_folder + "/ScoresWithRemovedFeatures.pdf"
@@ -1199,7 +1196,6 @@ def main(study_info_):
     Args:
         study_info_ (StudyInfo): Description
     """
-
 
     # plot_all_csv(study_info_)
     # 

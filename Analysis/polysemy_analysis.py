@@ -14,7 +14,6 @@ Attributes:
 # Standard imports
 import copy
 
-
 import pandas as pd
 import numpy as np
 import itertools
@@ -23,11 +22,10 @@ import itertools
 
 from sklearn.cluster import KMeans
 
-
 from Analysis.neural_models import NeuralNetworkCategorisationModel
 from baseline_model_testing import GeneratePrepositionModelParameters, SemanticMethods, PrototypeModel, PREPOSITION_LIST
-from Analysis.performance_test_functions import ModelGenerator, TestModels, MultipleRuns, Model, polysemy_scores_folder, \
-    polysemy_scores_all_preps_folder, compare_models
+from Analysis.performance_test_functions import ModelGenerator, TestModels, MultipleRuns, Model, POLYSEMY_SCORES_FOLDER, \
+    ALL_PREPS_POLYSEMY_SCORES_FOLDER, compare_models
 from data_import import Configuration, StudyInfo
 from compile_instances import SemanticCollection, ComparativeCollection
 
@@ -37,6 +35,8 @@ COMP_FILETAG = ComparativeCollection.filetag  # Tag for comp task files
 
 POLYSEMOUS_PREPOSITIONS = ['in', 'on', 'under', 'over']  # list of prepositions which exist in the data
 NON_POLYSEMOUS_PREPOSITIONS = ["inside", "above", "below", "on top of", 'against']
+
+POLYSEMY_MODEL_PROPERTY_FOLDER = "model info/polysemy/"
 
 
 class ClusterInModel:
@@ -141,11 +141,11 @@ class Polyseme:
         self.greater_feature_dict = greater_feature_dict
         self.less_feature_dict = less_feature_dict
 
-        self.annotation_csv = self.study_info.polyseme_data_folder + self.model_name + '/annotations/' + self.preposition + "-" + self.polyseme_name + ' .csv'
+        self.annotation_csv = POLYSEMY_MODEL_PROPERTY_FOLDER + self.model_name + '/annotations/' + self.preposition + "-" + self.polyseme_name + ' .csv'
         # self.prototype_csv = self.study_info.polyseme_data_folder + self.model_name + '/prototypes/' + self.preposition + "-" + self.polyseme_name + ' .csv'
         # self.mean_csv = self.study_info.polyseme_data_folder + self.model_name + '/means/' + self.preposition + "-" + self.polyseme_name + ' .csv'
         # self.regression_weights_csv = self.study_info.polyseme_data_folder + self.model_name + '/regression weights/' + self.preposition + "-" + self.polyseme_name + ' .csv'
-        self.plot_folder = self.study_info.polyseme_data_folder + self.model_name + '/plots/'
+        self.plot_folder = POLYSEMY_MODEL_PROPERTY_FOLDER + self.model_name + '/plots/'
 
         self.preposition_models = GeneratePrepositionModelParameters(self.study_info, self.preposition,
                                                                      self.train_scenes,
@@ -239,7 +239,7 @@ class Polyseme:
         """Summary
         """
         if output_file is None:
-            output_file = self.study_info.polyseme_data_folder + self.model_name + '/definitions/' + self.preposition + "-" + self.polyseme_name + ".csv"
+            output_file = POLYSEMY_MODEL_PROPERTY_FOLDER + self.model_name + '/definitions/' + self.preposition + "-" + self.polyseme_name + ".csv"
 
         out = dict()
         out["eq_feature_dict"] = []
@@ -616,7 +616,7 @@ class DistinctPrototypePolysemyModel(PolysemyModel):
         :return:
         """
 
-        return self.study_info.polyseme_data_folder + self.name + '/' + data_folder + '/' + preposition + " -" + data_folder + ".csv"
+        return POLYSEMY_MODEL_PROPERTY_FOLDER + self.name + '/' + data_folder + '/' + preposition + " -" + data_folder + ".csv"
 
     def output_polyseme_info(self, base_folder=None):
         """Summary
@@ -635,7 +635,7 @@ class DistinctPrototypePolysemyModel(PolysemyModel):
             for polyseme in d[preposition]:
                 # polyseme.output_prototype_weight()
                 polyseme.output_definition(
-                    base_folder + self.study_info.polyseme_data_folder + self.name + '/definitions/' + preposition + "-" + polyseme.polyseme_name + ".csv"
+                    base_folder + POLYSEMY_MODEL_PROPERTY_FOLDER + self.name + '/definitions/' + preposition + "-" + polyseme.polyseme_name + ".csv"
                 )
                 polyseme.plot(base_folder=base_folder)
 
@@ -782,7 +782,7 @@ class KMeansPolysemyModel(PolysemyModel):
     cluster_numbers = {'on': 8, 'in': 4, 'under': 4, 'over': 4, 'inside': 2, 'on top of': 4, 'below': 4, 'above': 4,
                        'against': 8}
 
-    def __init__(self, preposition_model_dict, test_scenes, study_info_, test_prepositions=PREPOSITION_LIST,):
+    def __init__(self, preposition_model_dict, test_scenes, study_info_, test_prepositions=PREPOSITION_LIST, ):
         PolysemyModel.__init__(self, KMeansPolysemyModel.name, test_scenes, study_info_,
                                test_prepositions=test_prepositions)
 
@@ -1002,7 +1002,8 @@ class GeneratePolysemeModels(ModelGenerator):
 
         self.neural_categorisation = NeuralNetworkCategorisationModel(self.preposition_parameters_dict,
                                                                       self.test_scenes,
-                                                                      self.study_info,test_prepositions=self.test_prepositions)
+                                                                      self.study_info,
+                                                                      test_prepositions=self.test_prepositions)
 
         self.cluster_model = KMeansPolysemyModel(self.preposition_parameters_dict, self.test_scenes, self.study_info,
                                                  test_prepositions=self.test_prepositions)
@@ -1051,11 +1052,11 @@ def test_models():
         study_info_ (TYPE): Description
     """
 
-    compare_models(10, 10, GeneratePolysemeModels, polysemy_scores_folder, test_prepositions=POLYSEMOUS_PREPOSITIONS)
+    compare_models(10, 10, GeneratePolysemeModels, POLYSEMY_SCORES_FOLDER, test_prepositions=POLYSEMOUS_PREPOSITIONS)
 
 
 def test_all_prepositions():
-    compare_models(10, 10, GeneratePolysemeModels, polysemy_scores_all_preps_folder, test_prepositions=PREPOSITION_LIST)
+    compare_models(10, 10, GeneratePolysemeModels, ALL_PREPS_POLYSEMY_SCORES_FOLDER, test_prepositions=PREPOSITION_LIST)
 
 
 def output_typicality(study_info_):

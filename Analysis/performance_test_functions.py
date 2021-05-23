@@ -15,9 +15,9 @@ from Analysis.data_import import Configuration, StudyInfo
 
 PREPOSITION_LIST = StudyInfo.preposition_list
 
-basic_model_scores_folder = "model evaluation/basic scores"
-polysemy_scores_folder = "model evaluation/polysemy"
-polysemy_scores_all_preps_folder = "model evaluation/polysemy - all prepositions"
+BASIC_MODEL_SCORES_FOLDER = "model evaluation/basic scores/"
+POLYSEMY_SCORES_FOLDER = "model evaluation/polysemy/"
+ALL_PREPS_POLYSEMY_SCORES_FOLDER = "model evaluation/polysemy - all prepositions/"
 
 
 class Model:
@@ -785,8 +785,8 @@ class MultipleRuns:
 def compare_models(runs, k, model_generator, base_output_folder, test_prepositions=PREPOSITION_LIST):
     study_info = StudyInfo("2019 study")
 
-    m = MultipleRuns(model_generator, base_output_folder + "/tables",
-                     base_output_folder + "/plots", study_info, test_prepositions=test_prepositions,
+    m = MultipleRuns(model_generator, base_output_folder + "tables",
+                     base_output_folder + "plots", study_info, test_prepositions=test_prepositions,
                      number_runs=runs,
                      k=k,
                      compare="y")
