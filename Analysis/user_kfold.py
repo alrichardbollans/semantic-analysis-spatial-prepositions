@@ -4,7 +4,7 @@ import csv
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from basic_model_testing import GeneratePrepositionModelParameters, preposition_list, PrototypeModel, ExemplarModel, \
+from baseline_model_testing import GeneratePrepositionModelParameters, PREPOSITION_LIST, PrototypeModel, ExemplarModel, \
     CSModel, ProximityModel, SimpleModel, BestGuessModel
 from classes import Instance, CompInstance, Comparison
 from compile_instances import SemanticCollection, ComparativeCollection
@@ -12,17 +12,17 @@ from data_import import SimpleConfiguration, StudyInfo, Configuration
 from Analysis.performance_test_functions import MultipleRuns
 from process_data import SemanticAnnotation, ComparativeAnnotation
 
-extra_folder = 'extra thesis results/updated kfold'
+TEST_FOLDER = 'extra thesis results/user kfold'
 
 
 def new_config_ratio_csv(preposition, study_info):
     filetag = 'semantic'
-    new_csv = extra_folder + '/' + study_info.config_ratio_csv(filetag, preposition)
+    new_csv = TEST_FOLDER + '/' + study_info.config_ratio_csv(filetag, preposition)
     return new_csv
 
 
 def new_constraint_csv(study_info):
-    new_csv = extra_folder + '/' + study_info.constraint_csv
+    new_csv = TEST_FOLDER + '/' + study_info.constraint_csv
     return new_csv
 
 
@@ -69,7 +69,7 @@ def new_constraint_csv(study_info):
 #         config_list = self.study_info.config_list
 #
 #         for preposition in self.get_used_prepositions():
-#             new_csv = extra_folder + '/' + self.study_info.config_ratio_csv(self.filetag, preposition)
+#             new_csv = TEST_FOLDER + '/' + self.study_info.config_ratio_csv(self.filetag, preposition)
 #             ## Write file of all instances
 #             with open(new_csv, "w") as csvfile:
 #                 outputwriter = csv.writer(csvfile)
@@ -180,7 +180,7 @@ class GenerateModelsSplitUsers:
         # Write new raio csv
         config_list = newsvcollection.study_info.config_list
 
-        for preposition in preposition_list:
+        for preposition in PREPOSITION_LIST:
             new_csv = new_config_ratio_csv(preposition, newsvcollection.study_info)
             ## Write file of all instances
             with open(new_csv,
@@ -243,7 +243,7 @@ class GenerateModelsSplitUsers:
         ### Values are lists of constraints for the preposition
         out = dict()
 
-        for preposition in preposition_list:
+        for preposition in PREPOSITION_LIST:
             # print(preposition)
             preposition_constraints = []
             for my_scene in self.study_info.scene_list:
@@ -274,7 +274,7 @@ class GenerateBasicModelsSplitUsers(GenerateModelsSplitUsers):
 
     # Generating models to test
     def __init__(self, train_users, test_users, study_info_, extra_features_to_remove=None, only_test_our_model=None,
-                 test_prepositions=preposition_list):
+                 test_prepositions=PREPOSITION_LIST):
         """Summary
 
 
@@ -343,7 +343,7 @@ class GenerateBasicModelsSplitUsers(GenerateModelsSplitUsers):
 
 class MultipleRunsSplitParticipants(MultipleRuns):
     def __init__(self, model_generator, scores_tables_folder, scores_plots_folder, study_info_,
-                 test_prepositions=preposition_list, number_runs=None,
+                 test_prepositions=PREPOSITION_LIST, number_runs=None,
                  k=None, compare=None):
         MultipleRuns.__init__(self, model_generator, scores_tables_folder, scores_plots_folder, study_info_,
                               test_prepositions=test_prepositions, number_runs=number_runs,
@@ -401,13 +401,13 @@ def test_basic_models():
     # t = TestModels(models, "all")
     # all_dataframe = t.score_dataframe.copy()
     #
-    # all_dataframe.to_csv(extra_folder + "/scores/all_test.csv")
+    # all_dataframe.to_csv(TEST_FOLDER + "/scores/all_test.csv")
     # print(all_dataframe)
 
     runs =100
     k=2
-    m = MultipleRunsSplitParticipants(GenerateBasicModelsSplitUsers, extra_folder + "/scores",
-                                      extra_folder + "/scores",
+    m = MultipleRunsSplitParticipants(GenerateBasicModelsSplitUsers, TEST_FOLDER + "/scores",
+                                      TEST_FOLDER + "/scores",
                                       study_info, number_runs=runs, k=k, compare="y")
     print(("Test Model k = " + str(k)))
     m.validation()
