@@ -1,0 +1,6 @@
+,Baseline Model,Neural Net Classification,KMeans Model,Distinct Prototype,Supervised Distinct Model
+Baseline Model,0,73,92,66,59
+Neural Net Classification,116,0,92,93,76
+KMeans Model,100,87,0,68,78
+Distinct Prototype,121,92,115,0,77
+Supervised Distinct Model,127,105,111,103,0
