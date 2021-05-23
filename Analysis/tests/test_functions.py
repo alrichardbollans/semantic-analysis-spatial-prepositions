@@ -49,11 +49,14 @@ def dropcolumns_reindexlike(newdf, originaldf):
     """Removes columns in newdf that aren't in orgininaldf and set index of new df to be same as originaldf
     :returns dataframe
     """
+    shared_columns = []
+    for col1 in originaldf.columns.tolist():
+        if col1 in newdf.columns.tolist():
+            shared_columns.append(col1)
 
-    columns_to_check = originaldf.columns.tolist()
-
-    newdf = newdf[columns_to_check]
+    newdf = newdf[shared_columns]
+    originaldf = originaldf[shared_columns]
 
     newdf = newdf.set_index(originaldf.index)
 
-    return newdf
+    return newdf, originaldf

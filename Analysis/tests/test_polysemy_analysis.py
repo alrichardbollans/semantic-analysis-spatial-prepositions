@@ -34,7 +34,7 @@ class Test(unittest.TestCase):
         generated_polyseme_models.non_shared.output_polyseme_info(base_folder=output_folder)
         model_name = GeneratePolysemeModels.distinct_model_name
         for preposition in POLYSEMOUS_PREPOSITIONS:
-            new_rank_csv = output_folder + POLYSEMY_MODEL_PROPERTY_FOLDER+ 'polyseme data/' + model_name + "/ranks/" + preposition + " -ranks.csv"
+            new_rank_csv = output_folder + POLYSEMY_MODEL_PROPERTY_FOLDER + model_name + "/ranks/" + preposition + " -ranks.csv"
             new_rank_df = pd.read_csv(new_rank_csv)
             original_rank_df = pd.read_csv(get_original_csv(new_rank_csv))
 
@@ -53,7 +53,8 @@ class Test(unittest.TestCase):
         study_info = StudyInfo("2019 study")
 
         all_scenes = study_info.scene_name_list
-        generated_polyseme_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info)
+        generated_polyseme_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info,
+                                                           test_prepositions=POLYSEMOUS_PREPOSITIONS)
 
         p_models = generated_polyseme_models.models
 
@@ -67,10 +68,10 @@ class Test(unittest.TestCase):
         print(new_dframe)
 
         # reindex original as it contains shared aswell but new doesn't
-        original_reindexed = dropcolumns_reindexlike(original_dataframe, new_dframe)
+        new_reindexed, original_reindexed = dropcolumns_reindexlike(new_dframe, original_dataframe)
 
         try:
-            assert_frame_equal(new_dframe, original_reindexed)
+            assert_frame_equal(new_reindexed, original_reindexed)
         except AssertionError as e:
             print(e)
 

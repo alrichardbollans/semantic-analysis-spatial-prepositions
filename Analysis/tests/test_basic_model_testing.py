@@ -43,8 +43,8 @@ class Test(unittest.TestCase):
 
         original_dataframe = pd.read_csv(archive_folder+'2019 study/scores/tables/all-model scores.csv', index_col=0)
 
-        m = MultipleRuns(GenerateBasicModels,basic_model_scores_folder + "/tables/all features",
-                     basic_model_scores_folder + "/plots/all features", study_info,number_runs=1,k=10)
+        m = MultipleRuns(GenerateBasicModels, BASIC_MODEL_SCORES_FOLDER + "tables/all features",
+                         BASIC_MODEL_SCORES_FOLDER + "plots/all features", study_info, number_runs=1, k=10)
         self.t_multiple_runs(m)
 
         generate_models = m.Generate_Models_all_scenes
@@ -59,19 +59,19 @@ class Test(unittest.TestCase):
         t = TestModels(models, "all")
         new_dframe = t.score_dataframe
 
-        new_dframe = dropcolumns_reindexlike(new_dframe, original_dataframe)
+        new_reindexed, original_reindexed = dropcolumns_reindexlike(new_dframe, original_dataframe)
 
-        print(original_dataframe)
-        print(new_dframe)
+        print(original_reindexed)
+        print(new_reindexed)
 
-        assert_frame_equal(new_dframe, original_dataframe)
+        assert_frame_equal(new_reindexed, original_reindexed)
 
     # @unittest.skip
     def test_k_fold(self):
         study_info = StudyInfo("2019 study")
 
-        m = MultipleRuns(GenerateBasicModels,basic_model_scores_folder + "/tables/all features",
-                     basic_model_scores_folder + "/plots/all features", study_info, number_runs=20, k=2, compare="y")
+        m = MultipleRuns(GenerateBasicModels, BASIC_MODEL_SCORES_FOLDER + "tables/all features",
+                         BASIC_MODEL_SCORES_FOLDER + "plots/all features", study_info, number_runs=20, k=2, compare="y")
 
         self.assertIsInstance(m.Generate_Models_all_scenes, GenerateBasicModels)
         self.assertIsInstance(m.Generate_Models_all_scenes.features_to_remove, list)
@@ -98,8 +98,8 @@ class Test(unittest.TestCase):
 
         study_info = StudyInfo("2019 study")
         functional_features = ["location_control", "support"]
-        m = MultipleRuns(GenerateBasicModels,basic_model_scores_folder + "/tables/all features",
-                     basic_model_scores_folder + "/plots/all features", study_info, number_runs=20, k=2, features_to_test=functional_features)
+        m = MultipleRuns(GenerateBasicModels, BASIC_MODEL_SCORES_FOLDER + "tables/all features",
+                         BASIC_MODEL_SCORES_FOLDER + "plots/all features", study_info, number_runs=20, k=2, features_to_test=functional_features)
         self.assertIsInstance(m.Generate_Models_all_scenes, GenerateBasicModels)
         self.assertIsInstance(m.Generate_Models_all_scenes.features_to_remove, list)
         self.assertEqual(m.Generate_Models_all_scenes.features_to_remove, Configuration.object_specific_features.copy())
@@ -166,8 +166,8 @@ class Test(unittest.TestCase):
     def test_model_parameters(self):
         study_info = StudyInfo("2019 study")
 
-        m = MultipleRuns(GenerateBasicModels,basic_model_scores_folder + "/tables/all features",
-                     basic_model_scores_folder + "/plots/all features", study_info)
+        m = MultipleRuns(GenerateBasicModels, BASIC_MODEL_SCORES_FOLDER + "tables/all features",
+                         BASIC_MODEL_SCORES_FOLDER + "plots/all features", study_info)
 
         generate_models = m.Generate_Models_all_scenes
         models = generate_models.models
