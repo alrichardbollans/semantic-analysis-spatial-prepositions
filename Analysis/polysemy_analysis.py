@@ -957,8 +957,6 @@ class GeneratePolysemeModels(ModelGenerator):
     baseline_model_name = "Baseline Model"
     cluster_model_name = KMeansPolysemyModel.name
 
-    our_model_name = distinct_model_name
-
     def __init__(self, train_scenes, test_scenes, study_info_, test_prepositions=None,
                  preserve_empty_polysemes=False):
         """Summary
@@ -1030,21 +1028,6 @@ class GeneratePolysemeModels(ModelGenerator):
         self.generate_model_lists()
 
 
-def output_all_polyseme_info(study_info_):
-    """Summary
-    :param study_info_:
-    
-    Args:
-        study_info_ (TYPE): Description
-    """
-    print("outputting all polyseme info")
-    all_scenes = study_info_.scene_name_list
-    generated_polyseme_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info_,
-                                                       preserve_empty_polysemes=True)
-    generated_polyseme_models.non_shared.output_polyseme_info()
-    generated_polyseme_models.distinct_supervised_model.output_polyseme_info()
-
-
 def test_models():
     """Summary
     
@@ -1073,8 +1056,23 @@ def output_typicality(study_info_):
     p_models = generated_polyseme_models.models
     for model in p_models:
 
-        for preposition in POLYSEMOUS_PREPOSITIONS:
+        for preposition in PREPOSITION_LIST:
             model.output_typicalities(preposition)
+
+
+def output_all_polyseme_info(study_info_):
+    """Summary
+    :param study_info_:
+
+    Args:
+        study_info_ (TYPE): Description
+    """
+    print("outputting all polyseme info")
+    all_scenes = study_info_.scene_name_list
+    generated_polyseme_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info_,
+                                                       preserve_empty_polysemes=True)
+    generated_polyseme_models.non_shared.output_polyseme_info()
+    generated_polyseme_models.distinct_supervised_model.output_polyseme_info()
 
 
 def main():

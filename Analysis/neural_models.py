@@ -317,7 +317,6 @@ class SupervisedNeuralTypicalityModel(Model):
 
 
 class GenerateNeuralModels(GenerateBasicModels):
-    # our_model_name = NeuralNetworkCategorisationModel.name
 
     def __init__(self, train_scenes, test_scenes, study_info_, test_prepositions):
         GenerateBasicModels.__init__(self, train_scenes, test_scenes, study_info_, test_prepositions=test_prepositions)

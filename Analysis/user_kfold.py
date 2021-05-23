@@ -269,8 +269,7 @@ class GenerateBasicModelsSplitUsers(GenerateModelsSplitUsers):
 
 
     """
-    # name of the model we want to compare with other models, and use to test particular features
-    our_model_name = PrototypeModel.name
+
 
     # Generating models to test
     def __init__(self, train_users, test_users, study_info_, extra_features_to_remove=None, only_test_our_model=None,

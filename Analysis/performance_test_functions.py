@@ -15,6 +15,7 @@ from Analysis.data_import import Configuration, StudyInfo
 
 PREPOSITION_LIST = StudyInfo.preposition_list
 
+MODEL_EVALUATION_FOLDER = "model evaluation/"
 BASIC_MODEL_SCORES_FOLDER = "model evaluation/basic scores/"
 POLYSEMY_SCORES_FOLDER = "model evaluation/polysemy/"
 ALL_PREPS_POLYSEMY_SCORES_FOLDER = "model evaluation/polysemy - all prepositions/"
@@ -198,7 +199,7 @@ class Model:
         """
         # output_csv = base_polysemy_folder+ "config typicalities/"+self.name+"-typicality_test-"+preposition+".csv"
         if input_csv is None:
-            input_csv = self.study_info.base_polysemy_folder + "config typicalities/typicality-" + preposition + ".csv"
+            input_csv = MODEL_EVALUATION_FOLDER + "config typicalities/typicality-" + preposition + ".csv"
         if study_info is None:
             study_info = self.study_info
 
@@ -295,7 +296,7 @@ class MultipleRuns:
     # Number of runs must be specified as well as k for repeated k-fold sampling
     def __init__(self, model_generator, scores_tables_folder, scores_plots_folder, study_info_,
                  number_runs=None, test_prepositions=None,
-                 k=None, compare=None, features_to_test=None):
+                 k=None, compare=None, features_to_test=None,model_to_test_name =None):
         """Summary
 
         Args:
@@ -316,6 +317,8 @@ class MultipleRuns:
             raise Exception("k must be greater than 1")
         self.compare = compare
         self.features_to_test = features_to_test
+        #Model to remove features from to test
+        self.model_to_test_name = model_to_test_name
 
         self.run_count = 0
         # Dictionary of dataframes giving scores. Indexed by removed features.
@@ -463,7 +466,7 @@ class MultipleRuns:
         # Compare Models
         if self.compare is not None:
             # Get our score from dataframe
-            # our_score = dataset.at["Overall", self.model_generator.our_model_name]
+            # our_score = dataset.at["Overall", self.model_to_test_name]
             for model in self.model_name_list:
                 # Get score
                 overall_score = dataset.at["Overall", model]
@@ -487,8 +490,8 @@ class MultipleRuns:
                 # feature_dataset = feature_dataset.drop(["Total Constraint Weights"],axis=1)
 
                 for p in self.test_prepositions + ["Average", "Overall"]:
-                    without_feature_score = feature_dataset.at[p, self.model_generator.our_model_name]
-                    with_feature_score = dataset.at[p, self.model_generator.our_model_name]
+                    without_feature_score = feature_dataset.at[p, self.model_to_test_name]
+                    with_feature_score = dataset.at[p, self.model_to_test_name]
 
                     if without_feature_score > with_feature_score:
                         self.count_without_feature_better[feature][p] += 1
@@ -722,8 +725,8 @@ class MultipleRuns:
 
             for feature in self.features_to_test:
                 print((self.dataframe_dict[feature]))
-                out[feature] = self.dataframe_dict[feature][self.model_generator.our_model_name]
-            out["None removed"] = self.average_dataframe[self.model_generator.our_model_name]
+                out[feature] = self.dataframe_dict[feature][self.model_to_test_name]
+            out["None removed"] = self.average_dataframe[self.model_to_test_name]
             df = pd.DataFrame(out, self.test_prepositions + ["Average", "Overall"])
             self.functional_feature_analysis_df = df
             df.to_csv(self.scores_tables_folder + "/functional_feature_analysis.csv")

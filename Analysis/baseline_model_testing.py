@@ -1038,8 +1038,6 @@ class GenerateBasicModels(ModelGenerator):
     
 
     """
-    # name of the model we want to compare with other models, and use to test particular features
-    our_model_name = PrototypeModel.name
 
     # Generating models to test
     def __init__(self, train_scenes, test_scenes, study_info_, extra_features_to_remove=None, only_test_our_model=None,
@@ -1104,7 +1102,7 @@ def test_features(study_info_):
     functional_features = ["location_control", "support"]
     m = MultipleRuns(GenerateBasicModels, BASIC_MODEL_SCORES_FOLDER + "tables/removed features",
                      BASIC_MODEL_SCORES_FOLDER + "plots/removed features", study_info_, number_runs=100, k=2,
-                     features_to_test=functional_features)
+                     features_to_test=functional_features, model_to_test_name=PrototypeModel.name)
     print("Test Features")
     m.validation()
     m.output()
@@ -1180,7 +1178,7 @@ def plot_feature_csv(k, study_info_):
     functional_features = ["location_control", "support"]
     m = MultipleRuns(GenerateBasicModels, BASIC_MODEL_SCORES_FOLDER + "tables/removed features",
                      BASIC_MODEL_SCORES_FOLDER + "plots/removed features", study_info_, number_runs=100, k=k,
-                     features_to_test=functional_features)
+                     features_to_test=functional_features, model_to_test_name=PrototypeModel.name)
     file = m.scores_tables_folder + "/functional_feature_analysis.csv"
     output_file = m.scores_plots_folder + "/ScoresWithRemovedFeatures.pdf"
     x_label = "Preposition"
