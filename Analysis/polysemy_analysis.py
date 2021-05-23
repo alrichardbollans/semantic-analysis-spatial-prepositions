@@ -2,18 +2,18 @@
 This file provides classes for generating models of typicality and running tests on them.
 First run compile_instances.py
 Attributes:
-    comp_filetag (str): Description
-    non_polysemous_prepositions (list): Description
-    polysemous_preposition_list (list): Description
+    COMP_FILETAG (str): Description
+    NON_POLYSEMOUS_PREPOSITIONS (list): Description
+    POLYSEMOUS_PREPOSITIONS (list): Description
     preposition_list (TYPE): Description
-    sv_filetag (str): Description
+    SV_FILETAG (str): Description
 
 """
 #
 
 # Standard imports
 import copy
-import os
+
 
 import pandas as pd
 import numpy as np
@@ -23,8 +23,6 @@ import itertools
 
 from sklearn.cluster import KMeans
 
-# Modules for plotting
-import matplotlib as mpl
 
 from Analysis.neural_models import NeuralNetworkCategorisationModel
 from baseline_model_testing import GeneratePrepositionModelParameters, SemanticMethods, PrototypeModel, PREPOSITION_LIST
@@ -34,11 +32,11 @@ from data_import import Configuration, StudyInfo
 from compile_instances import SemanticCollection, ComparativeCollection
 
 # Useful global variables
-sv_filetag = SemanticCollection.filetag  # Tag for sv task files
-comp_filetag = ComparativeCollection.filetag  # Tag for comp task files
-preposition_list = StudyInfo.preposition_list
-polysemous_preposition_list = ['in', 'on', 'under', 'over']  # list of prepositions which exist in the data
-non_polysemous_prepositions = ["inside", "above", "below", "on top of", 'against']
+SV_FILETAG = SemanticCollection.filetag  # Tag for sv task files
+COMP_FILETAG = ComparativeCollection.filetag  # Tag for comp task files
+
+POLYSEMOUS_PREPOSITIONS = ['in', 'on', 'under', 'over']  # list of prepositions which exist in the data
+NON_POLYSEMOUS_PREPOSITIONS = ["inside", "above", "below", "on top of", 'against']
 
 
 class ClusterInModel:
@@ -289,7 +287,7 @@ class PolysemyModel(Model):
     """
 
     # Puts together preposition models and has various functions for testing
-    def __init__(self, name, test_scenes, study_info_, test_prepositions=polysemous_preposition_list):
+    def __init__(self, name, test_scenes, study_info_, test_prepositions=PREPOSITION_LIST):
         """Summary
         
         Args:
@@ -309,11 +307,10 @@ class PolysemyModel(Model):
 
 class DistinctPrototypePolysemyModel(PolysemyModel):
 
-    def __init__(self, name, train_scenes, test_scenes, study_info_, test_prepositions=None,
+    def __init__(self, name, train_scenes, test_scenes, study_info_, test_prepositions=PREPOSITION_LIST,
                  preserve_empty_polysemes=False, baseline_model=None, features_to_remove=None,
                  oversample: bool = False):
-        if test_prepositions is None:
-            test_prepositions = polysemous_preposition_list
+
         PolysemyModel.__init__(self, name, test_scenes, study_info_, test_prepositions=test_prepositions)
 
         self.oversample = oversample
@@ -667,7 +664,7 @@ class DistinctPrototypeSupervisedPolysemyModel(DistinctPrototypePolysemyModel):
     # I think the differnce from above is that this isn't oversampled.
     # And it uses all scenes as train and validation.
     def __init__(self, name, train_scenes, test_scenes, study_info_, baseline_model: PrototypeModel,
-                 test_prepositions=preposition_list,
+                 test_prepositions=PREPOSITION_LIST,
                  preserve_empty_polysemes=False,
                  features_to_remove=None):
 
@@ -785,7 +782,7 @@ class KMeansPolysemyModel(PolysemyModel):
     cluster_numbers = {'on': 8, 'in': 4, 'under': 4, 'over': 4, 'inside': 2, 'on top of': 4, 'below': 4, 'above': 4,
                        'against': 8}
 
-    def __init__(self, preposition_model_dict, test_scenes, study_info_, test_prepositions=polysemous_preposition_list):
+    def __init__(self, preposition_model_dict, test_scenes, study_info_, test_prepositions=PREPOSITION_LIST,):
         PolysemyModel.__init__(self, KMeansPolysemyModel.name, test_scenes, study_info_,
                                test_prepositions=test_prepositions)
 
@@ -1054,7 +1051,7 @@ def test_models():
         study_info_ (TYPE): Description
     """
 
-    compare_models(10, 10, GeneratePolysemeModels, polysemy_scores_folder, test_prepositions=polysemous_preposition_list)
+    compare_models(10, 10, GeneratePolysemeModels, polysemy_scores_folder, test_prepositions=POLYSEMOUS_PREPOSITIONS)
 
 
 def test_all_prepositions():
@@ -1075,7 +1072,7 @@ def output_typicality(study_info_):
     p_models = generated_polyseme_models.models
     for model in p_models:
 
-        for preposition in polysemous_preposition_list:
+        for preposition in POLYSEMOUS_PREPOSITIONS:
             model.output_typicalities(preposition)
 
 
@@ -1089,7 +1086,7 @@ def main():
     Deleted Parameters:
         constraint_dict (TYPE): Description
     """
-    study_info = StudyInfo("2019 study")
+    # study_info = StudyInfo("2019 study")
     # output_all_polyseme_info(study_info_)
     # Clustering
 
