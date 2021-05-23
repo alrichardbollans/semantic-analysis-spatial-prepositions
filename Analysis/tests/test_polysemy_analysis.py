@@ -33,8 +33,8 @@ class Test(unittest.TestCase):
         # Check ranks
         generated_polyseme_models.non_shared.output_polyseme_info(base_folder=output_folder)
         model_name = GeneratePolysemeModels.distinct_model_name
-        for preposition in polysemous_preposition_list:
-            new_rank_csv = output_folder + study_info.polyseme_data_folder + model_name + "/ranks/" + preposition + " -ranks.csv"
+        for preposition in POLYSEMOUS_PREPOSITIONS:
+            new_rank_csv = output_folder + POLYSEMY_MODEL_PROPERTY_FOLDER+ 'polyseme data/' + model_name + "/ranks/" + preposition + " -ranks.csv"
             new_rank_df = pd.read_csv(new_rank_csv)
             original_rank_df = pd.read_csv(get_original_csv(new_rank_csv))
 
@@ -57,8 +57,8 @@ class Test(unittest.TestCase):
 
         p_models = generated_polyseme_models.models
 
-        all_csv = study_info.polysemy_score_folder + "all_test.csv"
-        original_dataframe = pd.read_csv(archive_folder + all_csv, index_col=0)
+        archive_all_csv = archive_folder + "2019 study/polysemy/scores/all_test.csv"
+        original_dataframe = pd.read_csv(archive_all_csv, index_col=0)
         print(original_dataframe)
 
         t = TestModels(p_models, "all")
@@ -84,12 +84,12 @@ class Test(unittest.TestCase):
         # Check typicalities
         for model in p_models:
 
-            for preposition in polysemous_preposition_list:
+            for preposition in POLYSEMOUS_PREPOSITIONS:
                 typ_csv = output_folder + model.study_info.base_polysemy_folder + "config typicalities/typicality-" + preposition + ".csv"
 
                 model.output_typicalities(preposition, input_csv=typ_csv)
 
-        for preposition in polysemous_preposition_list:
+        for preposition in POLYSEMOUS_PREPOSITIONS:
             # Remove Kmeans column as it is not deterministic
             new_typicality_csv = output_folder + generated_polyseme_models.study_info.base_polysemy_folder + "config typicalities/typicality-" + preposition + ".csv"
             new_typicality_df = pd.read_csv(new_typicality_csv, usecols=[0, 1, 2, 3, 4,
@@ -108,14 +108,13 @@ class Test(unittest.TestCase):
             print(original_reindexed.columns.tolist())
             print(new_reindexed.columns.tolist())
 
-
     # @unittest.skip
     def test_k_fold(self):
         study_info = StudyInfo("2019 study")
 
-        m = MultipleRunsPolysemyModels(GeneratePolysemeModels, study_info.polysemy_score_folder + "tables",
-                                       study_info.polysemy_score_folder + "plots", study_info, number_runs=10, k=10,
-                                       compare="y")
+        m = MultipleRuns(GeneratePolysemeModels, POLYSEMY_SCORES_FOLDER + "tables",
+                         POLYSEMY_SCORES_FOLDER + "plots", study_info, number_runs=10, k=10,
+                         compare="y", test_prepositions=POLYSEMOUS_PREPOSITIONS)
 
         self.assertIsInstance(m.Generate_Models_all_scenes, GeneratePolysemeModels)
         self.assertIsInstance(m.Generate_Models_all_scenes.features_to_remove, list)
@@ -141,8 +140,8 @@ class Test(unittest.TestCase):
 
 if __name__ == "__main__":
 
-    if len(polysemous_preposition_list) > 4:
-        print("polysemous_preposition_list contains non-polysemous prepositions")
+    if len(POLYSEMOUS_PREPOSITIONS) > 4:
+        print("POLYSEMOUS_PREPOSITIONS contains non-polysemous prepositions")
         print("Changing for test")
         polysemous_preposition_list = ['in', 'on', 'under', 'over']
     unittest.main()
