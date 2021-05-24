@@ -20,7 +20,6 @@ class Test(unittest.TestCase):
 
     def test_initial_model(self):
 
-
         s_info = StudyInfo("2019 study")
         all_scenes = s_info.scene_name_list
         preposition_models_dict = dict()
@@ -33,7 +32,15 @@ class Test(unittest.TestCase):
         baseline_model = PrototypeModel(preposition_models_dict, all_scenes, s_info)
         sense_model = OSFSenseModel("Sense Model (OS)", all_scenes, all_scenes, s_info,
                                     PREPOSITION_LIST, baseline_model=baseline_model, preserve_empty_polysemes=True)
+        config_list = s_info.config_list
+        c = config_list[0]
 
+        for model in [baseline_model,sense_model]:
+            value_array = np.array(c.row)
+            typicality = model.get_typicality('in', value_array, scene=c.scene, figure=c.figure,
+                                                              ground=c.ground, study=s_info)
+            print(type(typicality))
+            self.assertIsInstance(typicality, float)
         for p in PREPOSITION_LIST:
             for polyseme in sense_model.polyseme_dict[p]:
                 for f in Configuration.object_specific_features:

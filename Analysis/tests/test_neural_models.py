@@ -78,7 +78,7 @@ class Test(unittest.TestCase):
         study_info = StudyInfo("2019 study")
 
         m = MultipleRuns(GenerateNeuralModels, "tests",
-                                "tests", study_info, test_prepositions=PREPOSITION_LIST,
+                         "tests", study_info, test_prepositions=PREPOSITION_LIST,
                          number_runs=1,
                          k=2,
                          compare="y")
@@ -90,6 +90,25 @@ class Test(unittest.TestCase):
         # self.assertEqual(neural_supervised.train_test_proportion, 1)
         # self.assertGreater(len(neural_supervised.callbacks), 0)
         self.assertGreater(len(neural_categorisation.callbacks), 0)
+
+    def test_typicality_output(self):
+        study_info = StudyInfo("2019 study")
+
+        m = MultipleRuns(GenerateNeuralModels, "tests",
+                         "tests", study_info, test_prepositions=PREPOSITION_LIST,
+                         number_runs=1,
+                         k=2,
+                         compare="y")
+        neural_categorisation = m.Generate_Models_all_scenes.neural_categorisation
+
+        config_list = study_info.config_list
+        c = config_list[0]
+
+        value_array = np.array(c.row)
+        typicality = neural_categorisation.get_typicality('in', value_array, scene=c.scene, figure=c.figure,
+                                                          ground=c.ground, study=study_info)
+        print(type(typicality))
+        self.assertIsInstance(typicality, float)
 
 
 if __name__ == "__main__":
