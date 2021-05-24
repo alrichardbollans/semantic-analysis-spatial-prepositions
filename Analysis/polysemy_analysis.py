@@ -25,7 +25,7 @@ from sklearn.cluster import KMeans
 from Analysis.neural_models import NeuralNetworkCategorisationModel
 from baseline_model_testing import GeneratePrepositionModelParameters, SemanticMethods, PrototypeModel, PREPOSITION_LIST
 from Analysis.performance_test_functions import ModelGenerator, TestModels, MultipleRuns, Model, POLYSEMY_SCORES_FOLDER, \
-    ALL_PREPS_POLYSEMY_SCORES_FOLDER, compare_models
+    ALL_PREPS_POLYSEMY_SCORES_FOLDER, compare_models, POLYSEMY_MODEL_PROPERTY_FOLDER
 from data_import import Configuration, StudyInfo
 from compile_instances import SemanticCollection, ComparativeCollection
 
@@ -36,7 +36,7 @@ COMP_FILETAG = ComparativeCollection.filetag  # Tag for comp task files
 POLYSEMOUS_PREPOSITIONS = ['in', 'on', 'under', 'over']  # list of prepositions which exist in the data
 NON_POLYSEMOUS_PREPOSITIONS = ["inside", "above", "below", "on top of", 'against']
 
-POLYSEMY_MODEL_PROPERTY_FOLDER = "model info/polysemy/"
+
 
 
 class ClusterInModel:
@@ -1060,7 +1060,7 @@ def output_typicality(study_info_):
             model.output_typicalities(preposition)
 
 
-def output_all_polyseme_info(study_info_):
+def output_all_polyseme_info():
     """Summary
     :param study_info_:
 
@@ -1068,6 +1068,7 @@ def output_all_polyseme_info(study_info_):
         study_info_ (TYPE): Description
     """
     print("outputting all polyseme info")
+    study_info_ = StudyInfo("2019 study")
     all_scenes = study_info_.scene_name_list
     generated_polyseme_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info_,
                                                        preserve_empty_polysemes=True)
@@ -1092,7 +1093,8 @@ def main():
     # Polysemes and performance
 
     # output_typicality(study_info_)
-    test_models()
+    output_all_polyseme_info()
+    # test_models()
     # test_all_prepositions()
 
 

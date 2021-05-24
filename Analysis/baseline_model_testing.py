@@ -25,7 +25,8 @@ from sklearn.linear_model import LinearRegression, Ridge
 # Local module imports
 from typing import Dict
 
-from Analysis.performance_test_functions import ModelGenerator, MultipleRuns, Model, BASIC_MODEL_SCORES_FOLDER
+from Analysis.performance_test_functions import ModelGenerator, MultipleRuns, Model, BASIC_MODEL_SCORES_FOLDER, \
+    BASIC_MODEL_PROPERTY_FOLDER
 from compile_instances import InstanceCollection, SemanticCollection, ComparativeCollection
 from data_import import Configuration, StudyInfo
 
@@ -33,8 +34,6 @@ from data_import import Configuration, StudyInfo
 SV_FILETAG = SemanticCollection.filetag  # Tag for sv task files
 COMP_FILETAG = ComparativeCollection.filetag  # Tag for comp task files
 PREPOSITION_LIST = StudyInfo.preposition_list
-
-BASIC_MODEL_PROPERTY_FOLDER = "model info/basic/"
 
 
 def rename_feature(feature):
@@ -1188,22 +1187,22 @@ def plot_feature_csv(k, study_info_):
     m.plot_bar_from_csv(file, output_file, x_label, y_label, plot_title)
 
 
-def main(study_info_):
+def main():
     """Summary
     
     Args:
         study_info_ (StudyInfo): Description
     """
-
+    study_info = StudyInfo("2019 study")
     # plot_all_csv(study_info_)
     # 
-    initial_test(study_info_)
-    test_models(study_info_)
-    test_features(study_info_)
+    initial_test(study_info)
+    test_models(study_info)
+    test_features(study_info)
     pass
 
 
 if __name__ == '__main__':
-    study_info = StudyInfo("2019 study")
 
-    main(study_info)
+
+    main()
