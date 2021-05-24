@@ -1,2 +1,0 @@
-,Scene,Figure,Ground,ground_lightsource,ground_container,support,ground_verticality,shortest_distance,contact_proportion,above_proportion,below_proportion,bbox_overlap_proportion,horizontal_distance,f_covers_g,g_covers_f,location_control,selection_ratio,selected_atleast_once
-124,compsvu53,table,book,-0.12166736738870315,-0.5968659206925575,-0.6282480394372745,-0.3832424471159501,-0.4746133759004523,-0.4495031203312162,-0.9059561524155018,1.173550676083062,-0.35695286515686364,-0.2429605322667411,1.536002907966404,-0.6888498550641714,-0.8047318709080369,0.14285714285714285,1
