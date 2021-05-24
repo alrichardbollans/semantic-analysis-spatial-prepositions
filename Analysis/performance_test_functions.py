@@ -244,14 +244,8 @@ class Model:
                     row_index_in_df = in_df[(in_df['scene'] == c.scene) & (in_df['figure'] == c.figure) & (
                             in_df['ground'] == c.ground)].index.tolist()
 
-                    # if self.name in df_columns:
-                    print(in_df)
-                    print(typicality)
-                    print(row_index_in_df[0])
                     in_df.at[row_index_in_df[0], self.name] = typicality
-                # else:
-                # in_df[self.name] =
-            # print(preposition)
+
             in_df.to_csv(input_csv)
 
     def output_unsatisfied_constraints(self):
