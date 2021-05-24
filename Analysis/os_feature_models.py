@@ -128,9 +128,12 @@ def output_model_params():
 
     generated_polyseme_models = GenerateOSModels(all_scenes, all_scenes, s_info, PREPOSITION_LIST)
 
-    sense_model = generated_polyseme_models.sense_model
+    # sense_model = generated_polyseme_models.sense_model
 
-    sense_model.output_polyseme_info()
+    # sense_model.output_polyseme_info()
+    for m in generated_polyseme_models.models:
+        for preposition in PREPOSITION_LIST:
+            m.output_typicalities(preposition)
 
 
 def test_models():
