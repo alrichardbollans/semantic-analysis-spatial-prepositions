@@ -16,11 +16,16 @@ from Analysis.data_import import Configuration, StudyInfo
 PREPOSITION_LIST = StudyInfo.preposition_list
 
 MODEL_EVALUATION_FOLDER = "model evaluation/"
-BASIC_MODEL_SCORES_FOLDER = "model evaluation/basic scores/"
-POLYSEMY_SCORES_FOLDER = "model evaluation/polysemy/"
-ALL_PREPS_POLYSEMY_SCORES_FOLDER = "model evaluation/polysemy - all prepositions/"
+BASIC_MODEL_SCORES_FOLDER = MODEL_EVALUATION_FOLDER + "basic scores/"
+POLYSEMY_SCORES_FOLDER = MODEL_EVALUATION_FOLDER + "polysemy/"
+ALL_PREPS_POLYSEMY_SCORES_FOLDER = MODEL_EVALUATION_FOLDER + "polysemy - all prepositions/"
 
-OSF_SCORES_FOLDER = "model evaluation/osf - all prepositions/"
+OSF_SCORES_FOLDER = MODEL_EVALUATION_FOLDER + "osf - all prepositions/"
+
+MODEL_PROPERTY_FOLDER = "model info/"
+BASIC_MODEL_PROPERTY_FOLDER = MODEL_PROPERTY_FOLDER + "basic/"
+POLYSEMY_MODEL_PROPERTY_FOLDER = MODEL_PROPERTY_FOLDER + "polysemy/"
+CONFIG_TYPICALITY_FOLDER = MODEL_PROPERTY_FOLDER + "config typicalities/"
 
 
 class Model:
@@ -50,6 +55,8 @@ class Model:
 
         # Prepositions to test
         self.test_prepositions = test_prepositions
+        if self.test_prepositions is None:
+            self.test_prepositions = PREPOSITION_LIST
 
         # Dictionary containing constraints to satisfy
         if constraint_csv_removed_users is None:
@@ -199,9 +206,8 @@ class Model:
             preposition (TYPE): Description
             :param study_info: Study to output typicalities for
         """
-        # output_csv = base_polysemy_folder+ "config typicalities/"+self.name+"-typicality_test-"+preposition+".csv"
         if input_csv is None:
-            input_csv = MODEL_EVALUATION_FOLDER + "config typicalities/typicality-" + preposition + ".csv"
+            input_csv = CONFIG_TYPICALITY_FOLDER + "typicality-" + preposition + ".csv"
         if study_info is None:
             study_info = self.study_info
 
@@ -218,18 +224,15 @@ class Model:
             in_df = pd.DataFrame(columns=['scene', 'figure', 'ground', self.name])
             # print("unsusccefully read")
             new_csv = True
-        # else:
-        # 	pass
-        finally:
-            # pass
 
-            # print(in_df)
+        finally:
 
             df_columns = in_df.columns
             for c in config_list:
 
                 # Typicality is calculated for each configuration
                 # To check whether a configuration fits a particular polyseme we need to include
+                # study info and configuration info.
                 value_array = np.array(c.row)
                 typicality = self.get_typicality(preposition, value_array, scene=c.scene, figure=c.figure,
                                                  ground=c.ground, study=study_info)
@@ -242,7 +245,9 @@ class Model:
                             in_df['ground'] == c.ground)].index.tolist()
 
                     # if self.name in df_columns:
-
+                    print(in_df)
+                    print(typicality)
+                    print(row_index_in_df[0])
                     in_df.at[row_index_in_df[0], self.name] = typicality
                 # else:
                 # in_df[self.name] =

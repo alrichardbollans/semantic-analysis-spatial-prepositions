@@ -53,8 +53,8 @@ class NeuralNetworkCategorisationModel(Model):
     performance_metric = 'mean_squared_error'
 
     def __init__(self, preposition_model_dict: Dict[str, GeneratePrepositionModelParameters], test_scenes, study_info_,
-                 train_test_proportion=float(1), number_of_epochs=200, make_plots=False,test_prepositions=None):
-        Model.__init__(self, self.name, test_scenes, study_info_,test_prepositions = test_prepositions)
+                 train_test_proportion=float(1), number_of_epochs=200, make_plots=False, test_prepositions=None):
+        Model.__init__(self, self.name, test_scenes, study_info_, test_prepositions=test_prepositions)
         self.models = dict()
         self.preposition_model_dict = preposition_model_dict
         self.training_data_dict = {}
@@ -169,8 +169,8 @@ class SupervisedNeuralTypicalityModel(Model):
     # This model will take constraint dict as input and train to guess correct configuration.
 
     def __init__(self, train_scenes, test_scenes, study_info_, features_to_remove, train_test_proportion=float(1),
-                 number_of_epochs=200, make_plots=False,test_prepositions=None):
-        Model.__init__(self, self.name, test_scenes, study_info_,test_prepositions=test_prepositions)
+                 number_of_epochs=200, make_plots=False, test_prepositions=None):
+        Model.__init__(self, self.name, test_scenes, study_info_, test_prepositions=test_prepositions)
         self.models = dict()
         self.train_scenes = train_scenes
         self.features_to_remove = features_to_remove
@@ -324,7 +324,8 @@ class GenerateNeuralModels(GenerateBasicModels):
         preposition_models_dict = self.preposition_parameters_dict
 
         self.neural_categorisation = NeuralNetworkCategorisationModel(preposition_models_dict, self.test_scenes,
-                                                                      self.study_info)
+                                                                      self.study_info,
+                                                                      test_prepositions=test_prepositions)
 
         # self.neural_supervised = SupervisedNeuralTypicalityModel(self.train_scenes, self.test_scenes, self.study_info,
         #                                                          self.features_to_remove)
