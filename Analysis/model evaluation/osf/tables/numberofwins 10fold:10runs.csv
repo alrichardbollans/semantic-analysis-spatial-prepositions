@@ -1,0 +1,7 @@
+,Baseline Model,Neural Net Classification,KMeans Model,Distinct Prototype,Supervised Distinct Model,OSF Sense Model
+Baseline Model,0,75,95,58,58,60
+Neural Net Classification,114,0,111,86,80,95
+KMeans Model,93,75,0,60,48,73
+Distinct Prototype,129,94,119,0,81,106
+Supervised Distinct Model,124,104,142,98,0,112
+OSF Sense Model,125,87,108,82,69,0
