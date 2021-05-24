@@ -343,9 +343,8 @@ class MultipleRuns:
         # overall_folds_dict contains overall scores on each fold for each model
         # our_model_feature_folds_dict contains scores for each preposition when feature is included
         # our_model_without_feature_folds_dict contains scores for each preposition when feature is removed
-        self.overall_folds_dict, self.our_model_feature_folds_dict, self.our_model_without_feature_folds_dict = self.prepare_folds_dict()
+        self.overall_folds_dict, self.avg_folds_dict, self.our_model_feature_folds_dict, self.our_model_without_feature_folds_dict = self.prepare_folds_dict()
         # Also include avg scores from folds
-        self.avg_folds_dict = self.overall_folds_dict.copy()
 
         # following lists help confirm all scenes get used for both training and testing
         self.scenes_used_for_testing = []
@@ -398,9 +397,11 @@ class MultipleRuns:
 
     def prepare_folds_dict(self):
         """Generate dictionary to store scores for each fold"""
-        folds_dict = dict()
+        ov_folds_dict = dict()
+        avg_folds_dict = dict()
         for model_name in self.model_name_list:
-            folds_dict[model_name] = []
+            ov_folds_dict[model_name] = []
+            avg_folds_dict[model_name] = []
         our_model_feature_folds_dict = dict()
         our_model_without_feature_folds_dict = dict()
         if self.features_to_test is not None:
@@ -410,7 +411,7 @@ class MultipleRuns:
                 for p in self.test_prepositions + ["Average", "Overall"]:
                     our_model_feature_folds_dict[feature][p] = []
                     our_model_without_feature_folds_dict[feature][p] = []
-        return folds_dict, our_model_feature_folds_dict, our_model_without_feature_folds_dict
+        return ov_folds_dict, avg_folds_dict, our_model_feature_folds_dict, our_model_without_feature_folds_dict
 
     def generate_models(self, train_scenes, test_scenes, extra_features_to_remove=None):
         """Summary
@@ -610,11 +611,11 @@ class MultipleRuns:
         # Output comparison of models and p-value
         if self.compare is not None:
             # Output folds
-            folds_df = pd.DataFrame(self.overall_folds_dict)
-            folds_df.to_csv(self.overall_folds_csv)
+            ov_folds_df = pd.DataFrame(self.overall_folds_dict)
+            ov_folds_df.to_csv(self.overall_folds_csv)
 
-            folds_df = pd.DataFrame(self.avg_folds_dict)
-            folds_df.to_csv(self.avg_folds_csv)
+            avg_folds_df = pd.DataFrame(self.avg_folds_dict)
+            avg_folds_df.to_csv(self.avg_folds_csv)
 
             # Calculate all p values
             # Read --- model1 in column x model2 in row is pvalue model1 is better than model2
