@@ -15,8 +15,8 @@ from Analysis.performance_test_functions import MultipleRuns, ModelGenerator, Te
 from baseline_model_testing import GeneratePrepositionModelParameters, GenerateBasicModels, PREPOSITION_LIST, \
     PrototypeModel, get_standard_preposition_parameters
 
-NEURAL_MODEL_SCORES_FOLDER = "model evaluation/neural models"
-NEURAL_MODEL_INFO_FOLDER = "model info/neural models"
+NEURAL_MODEL_SCORES_FOLDER = "model evaluation/neural models/"
+NEURAL_MODEL_INFO_FOLDER = "model info/neural models/"
 
 
 class PerfectAccCallback(tf.keras.callbacks.Callback):
@@ -159,8 +159,9 @@ class NeuralNetworkCategorisationModel(Model):
         # print(new_array)
         new_array = tf.convert_to_tensor([new_array])
 
-        # print(new_array)
-        return self.models[preposition].predict(new_array)
+        predicted_array = self.models[preposition].predict(new_array)
+        typicality = float(predicted_array[0][0])
+        return typicality
 
 
 class SupervisedNeuralTypicalityModel(Model):
@@ -297,9 +298,11 @@ class SupervisedNeuralTypicalityModel(Model):
 
         for c in Constraints:
             test_array = np.subtract(c.lhs_values, c.rhs_values)
-
-            if self.get_typicality(c.preposition, test_array) > 0.5:
+            value = self.get_typicality(c.preposition, test_array)
+            if value > 0.5:
                 counter += c.weight
+            elif value == 0.5:
+                counter += float(c.weight) / 2
 
         return counter
 
@@ -313,7 +316,9 @@ class SupervisedNeuralTypicalityModel(Model):
         new_array = tf.convert_to_tensor([new_array])
 
         # print(new_array)
-        return self.models[preposition].predict(new_array)
+        predicted_array = self.models[preposition].predict(new_array)
+        typicality = float(predicted_array[0][0])
+        return typicality
 
 
 class GenerateNeuralModels(GenerateBasicModels):
