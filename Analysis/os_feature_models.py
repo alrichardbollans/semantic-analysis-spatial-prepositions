@@ -116,7 +116,7 @@ class GenerateOSModels(GeneratePolysemeModels):
         #                                               self.study_info)
         # self.baseline_model_with_osf.name = "Baseline (w. OSF)"
 
-        self.sense_model = OSFSenseModel("Sense Model (OS)", train_scenes, self.test_scenes, self.study_info,
+        self.sense_model = OSFSenseModel("OSF Sense Model", train_scenes, self.test_scenes, self.study_info,
                                          self.test_prepositions, baseline_model=self.baseline_model)
 
         self.generate_model_lists()

@@ -1,0 +1,17 @@
+,below-canon,below-near1,below-near2,below-far1
+ground_lightsource,,,,
+ground_container,,,,
+support,,,-0.6280830906212171,-0.38098433741210513
+ground_verticality,,,,
+size_ratio,,,,
+shortest_distance,,,1.2669513149338318,-0.3070305519279838
+contact_proportion,,,-0.4431540841306582,-0.1421493938700026
+above_proportion,,,-0.905956152415502,-0.9059561524155021
+below_proportion,,,1.5399979797114411,-0.5615551275667524
+bbox_overlap_proportion,,,-0.35527134650351594,1.7918785940037152
+horizontal_distance,,,0.9737331408552193,0.4269569447120048
+f_covers_g,,,0.3228387687379928,-0.6343873692634264
+g_covers_f,,,-0.4149835994197164,0.21979025172214153
+figure_lightsource,,,,
+figure_container,,,,
+location_control,,,-0.7913480841324965,0.1429030368353341
