@@ -20,6 +20,8 @@ BASIC_MODEL_SCORES_FOLDER = "model evaluation/basic scores/"
 POLYSEMY_SCORES_FOLDER = "model evaluation/polysemy/"
 ALL_PREPS_POLYSEMY_SCORES_FOLDER = "model evaluation/polysemy - all prepositions/"
 
+OSF_SCORES_FOLDER = "model evaluation/osf - all prepositions/"
+
 
 class Model:
     """Summary
@@ -296,7 +298,7 @@ class MultipleRuns:
     # Number of runs must be specified as well as k for repeated k-fold sampling
     def __init__(self, model_generator, scores_tables_folder, scores_plots_folder, study_info_,
                  number_runs=None, test_prepositions=None,
-                 k=None, compare=None, features_to_test=None,model_to_test_name =None):
+                 k=None, compare=None, features_to_test=None, model_to_test_name=None):
         """Summary
 
         Args:
@@ -317,7 +319,7 @@ class MultipleRuns:
             raise Exception("k must be greater than 1")
         self.compare = compare
         self.features_to_test = features_to_test
-        #Model to remove features from to test
+        # Model to remove features from to test
         self.model_to_test_name = model_to_test_name
 
         self.run_count = 0
@@ -829,6 +831,8 @@ class ModelGenerator:
         # Features to remove from consideration (not used in training or testing)
         self.features_to_remove = Configuration.object_specific_features.copy()
         self.test_prepositions = test_prepositions
+        if test_prepositions is None:
+            self.test_prepositions = PREPOSITION_LIST
 
     def generate_model_lists(self):
 
