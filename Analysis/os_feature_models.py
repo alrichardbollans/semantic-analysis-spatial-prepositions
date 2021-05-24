@@ -1,9 +1,11 @@
 from Analysis.baseline_model_testing import PREPOSITION_LIST, GeneratePrepositionModelParameters, \
     PrototypeModel
-from Analysis.performance_test_functions import ModelGenerator, TestModels, compare_models, OSF_SCORES_FOLDER
+from Analysis.performance_test_functions import ModelGenerator, TestModels, compare_models, OSF_SCORES_FOLDER, \
+    OSF_POLY_SCORES_FOLDER
 from Analysis.neural_models import NeuralNetworkCategorisationModel
 from Analysis.data_import import Configuration, StudyInfo
-from Analysis.polysemy_analysis import DistinctPrototypePolysemyModel, SalientFeature, GeneratePolysemeModels
+from Analysis.polysemy_analysis import DistinctPrototypePolysemyModel, SalientFeature, GeneratePolysemeModels, \
+    POLYSEMOUS_PREPOSITIONS
 
 OS_FEATURES_TO_REMOVE = ["ground_verticality"]
 
@@ -135,6 +137,10 @@ def output_model_params():
         for preposition in PREPOSITION_LIST:
             m.output_typicalities(preposition)
 
+def test_poly_preps():
+    compare_models(10, 10, GenerateOSModels, OSF_POLY_SCORES_FOLDER, test_prepositions=POLYSEMOUS_PREPOSITIONS)
+
+
 
 def test_models():
     """Summary
@@ -147,8 +153,9 @@ def test_models():
 
 
 def main():
-    output_model_params()
+    # output_model_params()
     # test_models()
+    test_poly_preps()
 
 
 if __name__ == '__main__':
