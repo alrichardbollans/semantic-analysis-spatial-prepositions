@@ -37,8 +37,6 @@ POLYSEMOUS_PREPOSITIONS = ['in', 'on', 'under', 'over']  # list of prepositions 
 NON_POLYSEMOUS_PREPOSITIONS = ["inside", "above", "below", "on top of", 'against']
 
 
-
-
 class ClusterInModel:
     """Summary
     
@@ -691,8 +689,8 @@ class DistinctPrototypeSupervisedPolysemyModel(DistinctPrototypePolysemyModel):
             validation_scenes = self.train_scenes
 
             # TODO: change this to test all combinations?
-            values_to_try_dict = dict()
-            best_values_dict = dict()
+            stndardsd_values_to_try_dict = dict()
+
             for f in original_salient_features:
                 g_values_to_try = [0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
                 l_values_to_try = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -705,8 +703,9 @@ class DistinctPrototypeSupervisedPolysemyModel(DistinctPrototypePolysemyModel):
                     values_to_try = l_values_to_try.copy()
                 else:
                     values_to_try = g_values_to_try.copy()
-                values_to_try_dict[f] = []
-                [values_to_try_dict[f].append(self.feature_processer.convert_normal_value_to_standardised(f.name, v))
+                stndardsd_values_to_try_dict[f] = []
+                [stndardsd_values_to_try_dict[f].append(
+                    self.feature_processer.convert_normal_value_to_standardised(f.name, v))
                  for v
                  in values_to_try]
 
@@ -714,9 +713,7 @@ class DistinctPrototypeSupervisedPolysemyModel(DistinctPrototypePolysemyModel):
 
                 best_value = None
                 best_score = 0
-                for v in values_to_try_dict[f]:
-                    # Convert to standardised values
-                    v = self.feature_processer.convert_normal_value_to_standardised(f.name, v)
+                for v in stndardsd_values_to_try_dict[f]:
 
                     total = self.test_ideal_feature_value(train_scenes, validation_scenes, preposition,
                                                           original_salient_features, f.name, v)
@@ -1003,15 +1000,15 @@ class GeneratePolysemeModels(ModelGenerator):
                                                                       self.study_info,
                                                                       test_prepositions=self.test_prepositions)
 
-        self.cluster_model = KMeansPolysemyModel(self.preposition_parameters_dict, self.test_scenes, self.study_info,
-                                                 test_prepositions=self.test_prepositions)
+        # self.cluster_model = KMeansPolysemyModel(self.preposition_parameters_dict, self.test_scenes, self.study_info,
+        #                                          test_prepositions=self.test_prepositions)
 
-        self.non_shared = DistinctPrototypePolysemyModel(GeneratePolysemeModels.distinct_model_name, self.train_scenes,
-                                                         self.test_scenes, self.study_info,
-                                                         test_prepositions=self.test_prepositions,
-                                                         preserve_empty_polysemes=self.preserve_empty_polysemes,
-                                                         baseline_model=self.baseline_model,
-                                                         features_to_remove=self.features_to_remove)
+        # self.non_shared = DistinctPrototypePolysemyModel(GeneratePolysemeModels.distinct_model_name, self.train_scenes,
+        #                                                  self.test_scenes, self.study_info,
+        #                                                  test_prepositions=self.test_prepositions,
+        #                                                  preserve_empty_polysemes=self.preserve_empty_polysemes,
+        #                                                  baseline_model=self.baseline_model,
+        #                                                  features_to_remove=self.features_to_remove)
 
         self.distinct_supervised_model = DistinctPrototypeSupervisedPolysemyModel(self.distinct_supervised_model_name,
                                                                                   train_scenes, test_scenes,
