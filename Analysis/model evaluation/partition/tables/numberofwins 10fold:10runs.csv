@@ -1,9 +1,8 @@
-,Our Prototype,Exemplar,Conceptual Space,Proximity,Simple,Best Guess,Partition Model,Median Model
-Our Prototype,0,89,85,100,73,68,66,65
-Exemplar,6,0,37,99,38,33,22,16
-Conceptual Space,6,56,0,99,43,43,36,29
-Proximity,0,1,1,0,0,0,0,0
-Simple,23,57,51,100,0,39,38,33
-Best Guess,29,64,51,100,53,0,44,37
-Partition Model,28,70,57,100,59,54,0,39
-Median Model,27,77,68,100,61,59,56,0
+,Our Prototype,Exemplar,Conceptual Space,Proximity,Simple,Best Guess,Partition Model
+Our Prototype,0,92,73,100,68,70,54
+Exemplar,3,0,35,99,36,35,25
+Conceptual Space,21,56,0,100,46,46,32
+Proximity,0,1,0,0,1,0,1
+Simple,27,62,49,99,0,44,34
+Best Guess,24,62,50,99,45,0,34
+Partition Model,39,69,65,99,61,61,0
