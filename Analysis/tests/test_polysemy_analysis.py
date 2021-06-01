@@ -21,14 +21,13 @@ class Test(unittest.TestCase):
     # @unittest.skip
     def test_polyseme_rank_info(self):
         '''
-        When this info is outputted it uses preserve_empty_polysemes = True.
+
         :return:
         '''
         study_info = StudyInfo("2019 study")
 
         all_scenes = study_info.scene_name_list
-        generated_polyseme_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info,
-                                                           preserve_empty_polysemes=True)
+        generated_polyseme_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info)
 
         # Check ranks
         generated_polyseme_models.non_shared.output_polyseme_info(base_folder=output_folder)
