@@ -480,73 +480,73 @@ class DistinctPrototypePolysemyModel(PolysemyModel):
 
         # On
 
-        f1 = SalientFeature("above_proportion", above09, "g")
-        f2 = SalientFeature("support", sup09, "g")
-        f3 = SalientFeature("contact_proportion", contact03, "g")
-        on_salient_features = [f1, f2, f3]
+        on_f1 = SalientFeature("above_proportion", above09, "g")
+        on_f2 = SalientFeature("support", sup09, "g")
+        on_f3 = SalientFeature("contact_proportion", contact03, "g")
+        on_salient_features = [on_f1, on_f2, on_f3]
 
         out["on"] = self.refine_ideal_meaning("on", on_salient_features)
 
         # In
-        f1 = SalientFeature("bbox_overlap_proportion", b07, "g")
-        f2 = SalientFeature("location_control", lc075, "g")
+        in_f1 = SalientFeature("bbox_overlap_proportion", b07, "g")
+        in_f2 = SalientFeature("location_control", lc075, "g")
 
-        in_salient_features = [f1, f2]
+        in_salient_features = [in_f1, in_f2]
 
         out["in"] = self.refine_ideal_meaning("in", in_salient_features)
 
         # Under
-        f1 = SalientFeature("g_covers_f", gf09, "g")
-        f2 = SalientFeature("below_proportion", bl09, "g")
+        under_f1 = SalientFeature("g_covers_f", gf09, "g")
+        under_f2 = SalientFeature("below_proportion", bl09, "g")
 
-        under_salient_features = [f1, f2]
+        under_salient_features = [under_f1, under_f2]
 
         out["under"] = self.refine_ideal_meaning("under", under_salient_features)
 
         # Over
-        f1 = SalientFeature("f_covers_g", fg09, "g")
-        f2 = SalientFeature("above_proportion", above07, "g")
+        over_f1 = SalientFeature("f_covers_g", fg09, "g")
+        over_f2 = SalientFeature("above_proportion", above07, "g")
 
-        over_salient_features = [f1, f2]
+        over_salient_features = [over_f1, over_f2]
 
         out["over"] = self.refine_ideal_meaning("over", over_salient_features)
 
         # on top of
 
-        f1 = SalientFeature("above_proportion", above09, "g")
-        f3 = SalientFeature("contact_proportion", contact03, "g")
-        ontopof_salient_features = [f1, f3]
+        ontopof_f1 = SalientFeature("above_proportion", above09, "g")
+        ontopof_f3 = SalientFeature("contact_proportion", contact03, "g")
+        ontopof_salient_features = [ontopof_f1, ontopof_f3]
         out["on top of"] = self.refine_ideal_meaning("on top of", ontopof_salient_features)
 
         # inside
-        f1 = SalientFeature("bbox_overlap_proportion", b07, "g")
+        inside_f1 = SalientFeature("bbox_overlap_proportion", b07, "g")
 
-        inside_salient_features = [f1]
+        inside_salient_features = [inside_f1]
 
         out["inside"] = self.refine_ideal_meaning("inside", inside_salient_features)
         # below
-        f1 = SalientFeature("horizontal_distance", hd01, "l")
-        f2 = SalientFeature("below_proportion", bl09, "g")
+        below_f1 = SalientFeature("horizontal_distance", hd01, "l")
+        below_f2 = SalientFeature("below_proportion", bl09, "g")
 
-        below_salient_features = [f1, f2]
+        below_salient_features = [below_f1, below_f2]
 
         out["below"] = self.refine_ideal_meaning("below", below_salient_features)
 
         # above
-        f1 = SalientFeature("horizontal_distance", hd01, "l")
-        f2 = SalientFeature("above_proportion", above07, "g")
+        above_f1 = SalientFeature("horizontal_distance", hd01, "l")
+        above_f2 = SalientFeature("above_proportion", above07, "g")
 
-        above_salient_features = [f1, f2]
+        above_salient_features = [above_f1, above_f2]
 
         out["above"] = self.refine_ideal_meaning("above", above_salient_features)
 
         # against
 
-        f1 = SalientFeature("horizontal_distance", hd01, "l")
-        f2 = SalientFeature("location_control", lc025, "g")
-        f3 = SalientFeature("contact_proportion", contact03, "g")
+        against_f1 = SalientFeature("horizontal_distance", hd01, "l")
+        against_f2 = SalientFeature("location_control", lc025, "g")
+        against_f3 = SalientFeature("contact_proportion", contact03, "g")
 
-        against_salient_features = [f1, f2, f3]
+        against_salient_features = [against_f1, against_f2, against_f3]
 
         out["against"] = self.refine_ideal_meaning("against", against_salient_features)
 
@@ -659,8 +659,7 @@ class DistinctPrototypePolysemyModel(PolysemyModel):
 
 
 class DistinctPrototypeSupervisedPolysemyModel(DistinctPrototypePolysemyModel):
-    # I think the differnce from above is that this isn't oversampled.
-    # And it uses all scenes as train and validation.
+
     def __init__(self, name, train_scenes, test_scenes, study_info_, baseline_model: PrototypeModel,
                  test_prepositions=PREPOSITION_LIST,
                  preserve_empty_polysemes=False,
@@ -993,7 +992,6 @@ class GeneratePolysemeModels(ModelGenerator):
                                              test_prepositions=self.test_prepositions)
         # Update some attributes
         self.baseline_model.name = self.baseline_model_name
-        self.baseline_model.unsatisfied_constraints_csv = self.baseline_model.study_info.name + "/polysemy/unsatisfied constraints/" + self.baseline_model.name + ".csv"
 
         self.neural_categorisation = NeuralNetworkCategorisationModel(self.preposition_parameters_dict,
                                                                       self.test_scenes,
@@ -1069,7 +1067,7 @@ def output_all_polyseme_info():
     all_scenes = study_info_.scene_name_list
     generated_polyseme_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info_,
                                                        preserve_empty_polysemes=True)
-    generated_polyseme_models.non_shared.output_polyseme_info()
+
     generated_polyseme_models.distinct_supervised_model.output_polyseme_info()
 
 
@@ -1089,10 +1087,10 @@ def main():
 
     # Polysemes and performance
 
-    # output_typicality(study_info_)
-    output_all_polyseme_info()
-    # test_models()
-    # test_all_prepositions()
+    output_typicality()
+    # output_all_polyseme_info()
+    test_models()
+    test_all_prepositions()
 
 
 if __name__ == '__main__':

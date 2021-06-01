@@ -48,45 +48,45 @@ class OSFSenseModel(DistinctPrototypePolysemyModel):
                                                                                                0.5)
 
         # On
-        f1 = SalientFeature("ground_container", ground_container_value, "l")
-        f2 = SalientFeature("size_ratio", fig_mobile_value, "l")
-        on_salient_features = [f1, f2]
+        on_f1 = SalientFeature("ground_container", ground_container_value, "l")
+        on_f2 = SalientFeature("size_ratio", fig_mobile_value, "l")
+        on_salient_features = [on_f1, on_f2]
 
         out["on"] = self.refine_ideal_meaning("on", on_salient_features)
         out["on top of"] = self.refine_ideal_meaning("on top of", on_salient_features)
 
         # In
-        f1 = SalientFeature("ground_container", ground_container_value, "g")
+        in_f1 = SalientFeature("ground_container", ground_container_value, "g")
 
-        in_salient_features = [f1]
+        in_salient_features = [in_f1]
 
         out["in"] = self.refine_ideal_meaning("in", in_salient_features)
         out["inside"] = self.refine_ideal_meaning("inside", in_salient_features)
 
         # Under
-        f1 = SalientFeature("figure_container", fig_container_value, "g")
-        f2 = SalientFeature("ground_lightsource", ground_lightsource_value, "g")
+        under_f1 = SalientFeature("figure_container", fig_container_value, "g")
+        under_f2 = SalientFeature("ground_lightsource", ground_lightsource_value, "g")
 
-        under_salient_features = [f1, f2]
+        under_salient_features = [under_f1, under_f2]
 
         out["under"] = self.refine_ideal_meaning("under", under_salient_features)
         out["below"] = self.refine_ideal_meaning("below", under_salient_features)
 
         # Over
-        f1 = SalientFeature("ground_container", ground_container_value, "g")
+        over_f1 = SalientFeature("ground_container", ground_container_value, "g")
         # There's no instance of this in sv dataset, so remove.
         # f2 = SalientFeature("figure_lightsource", fig_lightsource_value, "g")
 
-        over_salient_features = [f1]  # , f2]
+        over_salient_features = [over_f1]  # , f2]
 
         out["over"] = self.refine_ideal_meaning("over", over_salient_features)
         out["above"] = self.refine_ideal_meaning("above", over_salient_features)
 
         # against
 
-        f1 = SalientFeature("size_ratio", fig_mobile_value, "l")
+        against_f1 = SalientFeature("size_ratio", fig_mobile_value, "l")
 
-        against_salient_features = [f1]
+        against_salient_features = [against_f1]
 
         out["against"] = self.refine_ideal_meaning("against", against_salient_features)
 
@@ -134,8 +134,10 @@ def output_model_params():
 
     # sense_model.output_polyseme_info()
     for m in generated_polyseme_models.models:
-        for preposition in PREPOSITION_LIST:
-            m.output_typicalities(preposition)
+        # for preposition in PREPOSITION_LIST:
+        #     m.output_typicalities(preposition)
+
+        m.output_unsatisfied_constraints()
 
 def test_poly_preps():
     compare_models(10, 10, GenerateOSModels, OSF_POLY_SCORES_FOLDER, test_prepositions=POLYSEMOUS_PREPOSITIONS)
@@ -153,9 +155,9 @@ def test_models():
 
 
 def main():
-    # output_model_params()
+    output_model_params()
     # test_models()
-    test_poly_preps()
+    # test_poly_preps()
 
 
 if __name__ == '__main__':

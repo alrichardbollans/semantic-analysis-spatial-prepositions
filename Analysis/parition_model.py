@@ -109,9 +109,9 @@ class GeneratePartitionModels(GenerateBasicModels):
                                                           baseline_model=self.our_model,
                                                           features_to_remove=self.features_to_remove)
 
-        self.median_model = DistinctPrototypeMedianPolysemyModel(train_scenes, test_scenes, study_info_,
-                                                                 baseline_model=self.our_model,
-                                                                 features_to_remove=self.features_to_remove)
+        # self.median_model = DistinctPrototypeMedianPolysemyModel(train_scenes, test_scenes, study_info_,
+        #                                                          baseline_model=self.our_model,
+        #                                                          features_to_remove=self.features_to_remove)
 
         self.generate_model_lists()
 

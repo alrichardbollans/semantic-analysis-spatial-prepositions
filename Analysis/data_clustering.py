@@ -17,8 +17,8 @@ import matplotlib.ticker as ticker
 from baseline_model_testing import GeneratePrepositionModelParameters, PREPOSITION_LIST
 from Analysis.data_import import Features
 from data_import import Configuration, StudyInfo
-from extra_thesis_polysemy import GenerateAdditionalModels
-from polysemy_analysis import polysemous_preposition_list, GeneratePolysemeModels
+from polysemy_analysis import GeneratePolysemeModels
+
 
 
 class Cluster:
@@ -163,7 +163,7 @@ class Clustering:
         self.sample_weights = self.p_models_params.aff_dataset[
             self.p_models_params.ratio_feature_name]  # self.good_dataset[self.p_models_params.ratio_feature_name]
 
-        self.km_instances_to_cluster.to_csv("tests/test outputs/clustering tests/" + preposition + "km.csv")
+        self.km_instances_to_cluster.to_csv("test/test outputs/clustering test/" + preposition + "km.csv")
 
     def custom_metric(self, u, v):
         """Summary
@@ -457,8 +457,8 @@ def output_clustering_info(study_info_):
         study_info_ (TYPE): Description
     """
     all_scenes = study_info_.scene_name_list
-    generated_polysemy_models = GenerateAdditionalModels(all_scenes, all_scenes, study_info_,
-                                                         preserve_empty_polysemes=True)
+    generated_polysemy_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info_,
+                                                       preserve_empty_polysemes=True)
     mpl.rcParams['font.size'] = 15
     mpl.rcParams['legend.fontsize'] = 12
     for preposition in PREPOSITION_LIST:
@@ -467,7 +467,7 @@ def output_clustering_info(study_info_):
         c.plot_elbow_polyseme_inertia()
         c.output_initial_inertia()
 
-    # for preposition in polysemous_preposition_list:
+    # for preposition in POLYSEMOUS_PREPOSITIONS:
     #     c = Clustering(study_info_, preposition)
     #     c.plot_elbow_polyseme_inertia()
     #     c.output_initial_inertia()

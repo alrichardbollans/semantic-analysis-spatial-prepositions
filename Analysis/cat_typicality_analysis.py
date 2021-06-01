@@ -10,7 +10,7 @@ import csv
 from itertools import combinations
 import numpy as np
 
-from basic_model_testing import GeneratePrepositionModelParameters, PrototypeModel, preposition_list, \
+from baseline_model_testing import GeneratePrepositionModelParameters, PrototypeModel, PREPOSITION_LIST, \
     get_standard_preposition_parameters
 from compile_instances import SemanticCollection
 from data_import import Configuration, StudyInfo
@@ -41,9 +41,9 @@ def output_2020_study_results(base_folder = None):
     preposition_models_dict = get_standard_preposition_parameters()
 
     baseline_model = PrototypeModel(preposition_models_dict, scene_list, model_study_info,
-                                    test_prepositions=preposition_list)
+                                    test_prepositions=PREPOSITION_LIST)
     typ_model = DistinctPrototypePolysemyModel(GeneratePolysemeModels.distinct_model_name, scene_list, scene_list,
-                                               model_study_info, test_prepositions=preposition_list,
+                                               model_study_info, test_prepositions=PREPOSITION_LIST,
                                                baseline_model=baseline_model,
                                                features_to_remove=features_to_remove)
 

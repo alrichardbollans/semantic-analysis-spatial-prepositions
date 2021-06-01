@@ -78,3 +78,4 @@ crashlytics-build.properties
 /Analysis/tests/test outputs/2019 study/**
 /Analysis/tests/test outputs/2020 study/**
 /Analysis/tests/test outputs/
+/Analysis/tests/archive folder/old/**

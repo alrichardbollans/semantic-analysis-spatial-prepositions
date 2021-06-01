@@ -11,12 +11,10 @@ from tensorflow import keras
 from typing import Dict
 
 from Analysis.data_import import StudyInfo, Configuration
-from Analysis.performance_test_functions import MultipleRuns, ModelGenerator, TestModels, Model, compare_models
-from baseline_model_testing import GeneratePrepositionModelParameters, GenerateBasicModels, PREPOSITION_LIST, \
-    PrototypeModel, get_standard_preposition_parameters
-
-NEURAL_MODEL_SCORES_FOLDER = "model evaluation/neural models/"
-NEURAL_MODEL_INFO_FOLDER = "model info/neural models/"
+from Analysis.performance_test_functions import TestModels, Model, compare_models, \
+    plot_bar_from_csv, NEURAL_MODEL_SCORES_FOLDER, NEURAL_MODEL_INFO_FOLDER
+from baseline_model_testing import GeneratePrepositionModelParameters, GenerateBasicModels, \
+    get_standard_preposition_parameters
 
 
 class PerfectAccCallback(tf.keras.callbacks.Callback):
@@ -382,19 +380,26 @@ def test_neural_models(runs, k):
     """
     compare_models(runs, k, GenerateNeuralModels, NEURAL_MODEL_SCORES_FOLDER)
 
+def plot_all_csv():
+
+    csv_file = NEURAL_MODEL_SCORES_FOLDER + "tables/initial_test.csv"
+    plot_file = NEURAL_MODEL_SCORES_FOLDER + "plots/ScoresUsingAllData.pdf"
+    plot_bar_from_csv(csv_file, plot_file, "Preposition", "Score", "Scores Using All Data")
+
 
 def main():
     print(tf.__version__)
     # should_be_one = [1.33, -0.60, 1.99, 0.40, -0.75, 2.60, -0.95, 0.45, 1.51, 1.84]
     # print(tf.shape(should_be_one))
     # print(tf.shape([should_be_one]))
-
+    study_info = StudyInfo("2019 study")
+    plot_all_csv()
     # sup_dnn_model_training()
     # verify_dnn_model()
     # verify_sup_model()
 
     #
-    test_neural_models(10, 10)
+    # test_neural_models(10, 10)
 
 
 if __name__ == '__main__':

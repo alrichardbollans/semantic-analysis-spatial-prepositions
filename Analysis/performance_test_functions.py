@@ -27,6 +27,7 @@ MODEL_PROPERTY_FOLDER = "model info/"
 BASIC_MODEL_PROPERTY_FOLDER = MODEL_PROPERTY_FOLDER + "basic/"
 POLYSEMY_MODEL_PROPERTY_FOLDER = MODEL_PROPERTY_FOLDER + "polysemy/"
 CONFIG_TYPICALITY_FOLDER = MODEL_PROPERTY_FOLDER + "config typicalities/"
+UNSATISFIED_CONSTRAINTS_FOLDER = MODEL_PROPERTY_FOLDER + "unsatisfied constraints/"
 
 
 class Model:
@@ -65,7 +66,7 @@ class Model:
         else:
             self.constraint_dict = Constraint.read_from_csv(constraint_csv_removed_users)
         # Csv to write unsatisfied constraints when testing/training on all scenes
-        self.unsatisfied_constraints_csv = "extra thesis results/unsatisfied constraints/" + self.name + ".csv"
+        self.unsatisfied_constraints_csv = UNSATISFIED_CONSTRAINTS_FOLDER + self.name + ".csv"
 
     def folds_check(self, folds):
         return True
@@ -289,6 +290,64 @@ class Model:
             return value_array
 
 
+def plot_bar_from_csv(csv_file, file_to_save, x_label, y_label, plot_title, columns_to_drop=None,
+                      new_column_order=None):
+    """Summary
+
+    Args:
+        file (TYPE): Description
+        file_to_save (TYPE): Description
+        x_label (TYPE): Description
+        y_label (TYPE): Description
+        plot_title (TYPE): Description
+        columns_to_drop (None, optional): Description
+    """
+    dataset_to_chart = pd.read_csv(csv_file, index_col=0)
+    if columns_to_drop is not None:
+        dataset_to_chart = dataset_to_chart.drop(columns_to_drop, axis=1)
+
+    plot_dataframe_bar_chart(dataset_to_chart, file_to_save, x_label, y_label, plot_title,
+                             new_column_order=new_column_order)
+
+
+def plot_dataframe_bar_chart(dataset_to_chart, file_to_save, x_label, y_label, plot_title, new_column_order=None):
+    """Summary
+
+    Args:
+        dataset (TYPE): Description
+        file_to_save (TYPE): Description
+        x_label (TYPE): Description
+        y_label (TYPE): Description
+        plot_title (TYPE): Description
+    """
+    # # Edit plot settings
+    mpl.rcParams['font.size'] = 40
+    mpl.rcParams['legend.fontsize'] = 37
+    mpl.rcParams['axes.titlesize'] = 'medium'
+    mpl.rcParams['axes.labelsize'] = 'medium'
+    mpl.rcParams['ytick.labelsize'] = 'small'
+
+    if new_column_order is not None:
+        reordered_df = dataset_to_chart[new_column_order]
+    else:
+        reordered_df = dataset_to_chart
+
+    ax = reordered_df.plot(kind='bar', width=0.85, title=plot_title, figsize=(20, 10), legend=True)
+
+    ax.set_xlabel(x_label, labelpad=10)
+    ax.set_ylabel(y_label)
+    ax.set_yticks(np.arange(0, 1.01, 0.05))
+    ax.set_ylim([0, 1])
+    ax.set_title(plot_title, pad=10)
+    ax.grid(True)
+    ax.set_axisbelow(True)
+
+    plt.legend(loc='upper center', bbox_to_anchor=(0.44, -0.42), ncol=3)
+
+    # plt.show()
+    plt.savefig(file_to_save, bbox_inches='tight')
+
+
 class MultipleRuns:
     """Summary
 
@@ -356,7 +415,7 @@ class MultipleRuns:
         if not os.path.isdir(self.scores_plots_folder):
             raise Exception("Not a valid path! 2")
 
-        self.all_csv = self.scores_tables_folder + "/all_test.csv"
+        self.all_csv = self.scores_tables_folder + "/initial_test.csv"
         self.all_plot = self.scores_plots_folder + "/ScoresUsingAllData.pdf"
 
         if self.k is not None:
@@ -577,7 +636,7 @@ class MultipleRuns:
         for i in range(self.number_runs):
             self.run_count = i
 
-            print(("Run Number:" + str(i + 1)))
+            print("Run Number:" + str(i + 1))
             run_start_time = time.time()
 
             if self.k is not None:
@@ -587,7 +646,7 @@ class MultipleRuns:
 
                     if self.folds_check(folds):
                         for f in folds:
-                            print(("Fold Number:" + str(folds.index(f))))
+                            print("Fold Number:" + str(folds.index(f)) + "(Run Number:" + str(i + 1)+")")
                             fold_start_time = time.time()
                             test_scenes = f
                             train_scenes = []
@@ -692,12 +751,7 @@ class MultipleRuns:
     def output(self):
         """Summary
         """
-        # # Edit plot settings
-        mpl.rcParams['font.size'] = 40
-        mpl.rcParams['legend.fontsize'] = 37
-        mpl.rcParams['axes.titlesize'] = 'medium'
-        mpl.rcParams['axes.labelsize'] = 'medium'
-        mpl.rcParams['ytick.labelsize'] = 'small'
+
         # Handle outputting here so we're not always outputting
         self.average_dataframe = self.dataframe_dict["all_features"]
         # Reorder columns for output
@@ -750,42 +804,22 @@ class MultipleRuns:
             y_label (TYPE): Description
             plot_title (TYPE): Description
         """
-        if self.features_to_test == None:
+        if self.features_to_test is None:
             new_column_order = self.model_name_list
-            reordered_df = dataset[new_column_order]
+            plot_dataframe_bar_chart(dataset, file_to_save, x_label, y_label, plot_title,
+                                     new_column_order=new_column_order)
+
         else:
-            reordered_df = dataset
 
-        ax = reordered_df.plot(kind='bar', width=0.85, title=plot_title, figsize=(20, 10), legend=True)
+            plot_dataframe_bar_chart(dataset, file_to_save, x_label, y_label, plot_title)
 
-        ax.set_xlabel(x_label, labelpad=10)
-        ax.set_ylabel(y_label)
-        ax.set_yticks(np.arange(0, 1.01, 0.05))
-        ax.set_ylim([0, 1])
-        ax.set_title(plot_title, pad=10)
-        ax.grid(True)
-        ax.set_axisbelow(True)
-
-        plt.legend(loc='upper center', bbox_to_anchor=(0.44, -0.42), ncol=3)
-
-        # plt.show()
-        plt.savefig(file_to_save, bbox_inches='tight')
-
-    def plot_bar_from_csv(self, file, file_to_save, x_label, y_label, plot_title, columns_to_drop=None):
-        """Summary
-
-        Args:
-            file (TYPE): Description
-            file_to_save (TYPE): Description
-            x_label (TYPE): Description
-            y_label (TYPE): Description
-            plot_title (TYPE): Description
-            columns_to_drop (None, optional): Description
-        """
-        dataset = pd.read_csv(file, index_col=0)
-        if columns_to_drop is not None:
-            dataset = dataset.drop(columns_to_drop, axis=1)
-        self.plot_dataframe_bar_chart(dataset, file_to_save, x_label, y_label, plot_title)
+    def plot_bar_from_csv(self, csv_file, file_to_save, x_label, y_label, plot_title, columns_to_drop=None):
+        if self.features_to_test is None:
+            new_column_order = self.model_name_list
+            plot_bar_from_csv(csv_file, file_to_save, x_label, y_label, plot_title, columns_to_drop=columns_to_drop,
+                              new_column_order=new_column_order)
+        else:
+            plot_bar_from_csv(csv_file, file_to_save, x_label, y_label, plot_title, columns_to_drop=columns_to_drop)
 
 
 def compare_models(runs, k, model_generator, base_output_folder, test_prepositions=PREPOSITION_LIST):
@@ -801,7 +835,7 @@ def compare_models(runs, k, model_generator, base_output_folder, test_prepositio
     t = TestModels(models_to_test, "all")
     all_dataframe = t.score_dataframe.copy()
     print(all_dataframe)
-    all_dataframe.to_csv(base_output_folder + "/tables/initial_test.csv")
+    all_dataframe.to_csv(m.all_csv)
 
     print(("Test Model k = " + str(k)))
     m.validation()
@@ -883,3 +917,7 @@ class TestModels:
         reordered_df = df[new_column_order]
 
         self.score_dataframe = reordered_df
+
+
+NEURAL_MODEL_SCORES_FOLDER = "model evaluation/neural models/"
+NEURAL_MODEL_INFO_FOLDER = "model info/neural models/"
