@@ -7,11 +7,11 @@ size_ratio,None,None,None
 shortest_distance,None,None,None
 contact_proportion,None,None,None
 above_proportion,None,None,None
-below_proportion,None,None,1.442637
+below_proportion,None,None,1.276957
 bbox_overlap_proportion,None,None,None
 horizontal_distance,None,None,None
 f_covers_g,None,None,None
-g_covers_f,None,None,-0.385214
+g_covers_f,None,None,0.924151
 figure_lightsource,None,None,None
 figure_container,None,None,None
 location_control,None,None,None

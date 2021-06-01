@@ -1,12 +1,6 @@
 """Summary
 This file provides classes for generating models of typicality and running tests on them.
 First run compile_instances.py
-Attributes:
-    COMP_FILETAG (str): Description
-    NON_POLYSEMOUS_PREPOSITIONS (list): Description
-    POLYSEMOUS_PREPOSITIONS (list): Description
-    preposition_list (TYPE): Description
-    SV_FILETAG (str): Description
 
 """
 #
@@ -306,7 +300,7 @@ class PolysemyModel(Model):
 class DistinctPrototypePolysemyModel(PolysemyModel):
 
     def __init__(self, name, train_scenes, test_scenes, study_info_, test_prepositions=PREPOSITION_LIST,
-                 preserve_empty_polysemes=False, baseline_model=None, features_to_remove=None,
+                 baseline_model=None, features_to_remove=None,
                  oversample: bool = False):
 
         PolysemyModel.__init__(self, name, test_scenes, study_info_, test_prepositions=test_prepositions)
@@ -315,13 +309,7 @@ class DistinctPrototypePolysemyModel(PolysemyModel):
         self.baseline_model = baseline_model
         self.train_scenes = train_scenes
         self.features_to_remove = features_to_remove
-        # When empty polysemes are preserved their values are generated as normal
-        # e.g. rank,number of instances  = 0. THis is useful for outputting data on the polysemes
-        # When empty polysemes are not preserved, empty polysemes are assigned values from the baseline model.
-        # I.e. Assign True when generating polysemes to explore data
-        # Assign False when testing model.
 
-        self.preserve_empty_polysemes = preserve_empty_polysemes
         # Dictionary of polysemes for each preposition
         # Non-shared polysemes don't share the prototype and this is the default
         self.polyseme_dict = dict()
@@ -425,26 +413,22 @@ class DistinctPrototypePolysemyModel(PolysemyModel):
                     polysemes.append(ply)
                 x = x - 1
 
-            if self.preserve_empty_polysemes:
-                pass
-            else:
+            for poly in polysemes:
 
-                for poly in polysemes:
+                if poly.number_of_instances == 0:
+                    # In the case there are no training instances (rank=0)
+                    # Set the general parameters
 
-                    if poly.number_of_instances == 0:
-                        # In the case there are no training instances (rank=0)
-                        # Set the general parameters
+                    poly.weights = self.baseline_model.preposition_model_dict[preposition].regression_weights
+                    poly.prototype = self.baseline_model.preposition_model_dict[preposition].prototype
 
-                        poly.weights = self.baseline_model.preposition_model_dict[preposition].regression_weights
-                        poly.prototype = self.baseline_model.preposition_model_dict[preposition].prototype
+                    ratio_feature_name = GeneratePrepositionModelParameters.ratio_feature_name
 
-                        ratio_feature_name = GeneratePrepositionModelParameters.ratio_feature_name
+                    poly.rank = self.baseline_model.preposition_model_dict[preposition].aff_dataset.mean(axis=0)[
+                        ratio_feature_name]
 
-                        poly.rank = self.baseline_model.preposition_model_dict[preposition].aff_dataset.mean(axis=0)[
-                            ratio_feature_name]
-
-                        if np.isnan(poly.rank):
-                            poly.rank = 0
+                    if np.isnan(poly.rank):
+                        poly.rank = 0
 
             polyseme_list = self.modify_polysemes(polysemes)
             return polyseme_list
@@ -620,6 +604,7 @@ class DistinctPrototypePolysemyModel(PolysemyModel):
         """Summary
         Outputs polyseme info from model.
         """
+
         d = self.polyseme_dict
         if base_folder is None:
             base_folder = ""
@@ -662,12 +647,9 @@ class DistinctPrototypeSupervisedPolysemyModel(DistinctPrototypePolysemyModel):
 
     def __init__(self, name, train_scenes, test_scenes, study_info_, baseline_model: PrototypeModel,
                  test_prepositions=PREPOSITION_LIST,
-                 preserve_empty_polysemes=False,
                  features_to_remove=None):
-
         DistinctPrototypePolysemyModel.__init__(self, name, train_scenes, test_scenes, study_info_,
                                                 test_prepositions=test_prepositions,
-                                                preserve_empty_polysemes=preserve_empty_polysemes,
                                                 baseline_model=baseline_model, features_to_remove=features_to_remove,
                                                 oversample=False)
 
@@ -705,8 +687,8 @@ class DistinctPrototypeSupervisedPolysemyModel(DistinctPrototypePolysemyModel):
                 stndardsd_values_to_try_dict[f] = []
                 [stndardsd_values_to_try_dict[f].append(
                     self.feature_processer.convert_normal_value_to_standardised(f.name, v))
-                 for v
-                 in values_to_try]
+                    for v
+                    in values_to_try]
 
             for f in original_salient_features:
 
@@ -931,7 +913,7 @@ class GeneratePolysemeModels(ModelGenerator):
         cluster_model (TYPE): Description
         models (TYPE): Description
         non_shared (TYPE): Description
-        preserve_empty_polysemes (TYPE): Description
+
         shared (TYPE): Description
         study_info (TYPE): Description
         test_scenes (TYPE): Description
@@ -953,15 +935,13 @@ class GeneratePolysemeModels(ModelGenerator):
     baseline_model_name = "Baseline Model"
     cluster_model_name = KMeansPolysemyModel.name
 
-    def __init__(self, train_scenes, test_scenes, study_info_, test_prepositions=None,
-                 preserve_empty_polysemes=False):
+    def __init__(self, train_scenes, test_scenes, study_info_, test_prepositions=None):
         """Summary
         
         Args:
             train_scenes (TYPE): Description
             test_scenes (TYPE): Description
             study_info_ (TYPE): Description
-            preserve_empty_polysemes (bool, optional): Description
             :param test_prepositions:
             :param study_info_:
         
@@ -970,12 +950,6 @@ class GeneratePolysemeModels(ModelGenerator):
         """
 
         ModelGenerator.__init__(self, train_scenes, test_scenes, study_info_, test_prepositions)
-
-        # When empty polysemes are preserved their values are generated as normal
-        # e.g. rank,numebr of instances  = 0. THis is useful for outputting data on the polysemes
-        # When empty polysemes are not preserved, empty polysemes are assigned values from the baseline model.
-
-        self.preserve_empty_polysemes = preserve_empty_polysemes
 
         # First generate baseline model
         preposition_models_dict = dict()
@@ -1004,7 +978,6 @@ class GeneratePolysemeModels(ModelGenerator):
         # self.non_shared = DistinctPrototypePolysemyModel(GeneratePolysemeModels.distinct_model_name, self.train_scenes,
         #                                                  self.test_scenes, self.study_info,
         #                                                  test_prepositions=self.test_prepositions,
-        #                                                  preserve_empty_polysemes=self.preserve_empty_polysemes,
         #                                                  baseline_model=self.baseline_model,
         #                                                  features_to_remove=self.features_to_remove)
 
@@ -1037,7 +1010,7 @@ def test_all_prepositions():
     compare_models(10, 10, GeneratePolysemeModels, ALL_PREPS_POLYSEMY_SCORES_FOLDER, test_prepositions=PREPOSITION_LIST)
 
 
-def output_typicality(study_info_):
+def output_typicality():
     """Summary
     :param study_info_:
     
@@ -1045,9 +1018,9 @@ def output_typicality(study_info_):
         study_info_ (TYPE): Description
     """
     print("outputting typicalities")
-
-    all_scenes = study_info_.scene_name_list
-    generated_polyseme_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info_)
+    s_info = StudyInfo("2019 study")
+    all_scenes = s_info.scene_name_list
+    generated_polyseme_models = GeneratePolysemeModels(all_scenes, all_scenes, s_info)
     p_models = generated_polyseme_models.models
     for model in p_models:
 
@@ -1065,8 +1038,7 @@ def output_all_polyseme_info():
     print("outputting all polyseme info")
     study_info_ = StudyInfo("2019 study")
     all_scenes = study_info_.scene_name_list
-    generated_polyseme_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info_,
-                                                       preserve_empty_polysemes=True)
+    generated_polyseme_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info_)
 
     generated_polyseme_models.distinct_supervised_model.output_polyseme_info()
 

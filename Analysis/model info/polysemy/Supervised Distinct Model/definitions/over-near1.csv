@@ -6,11 +6,11 @@ ground_verticality,None,None,None
 size_ratio,None,None,None
 shortest_distance,None,None,None
 contact_proportion,None,None,None
-above_proportion,None,None,0.035836
+above_proportion,None,None,0.202898
 below_proportion,None,None,None
 bbox_overlap_proportion,None,None,None
 horizontal_distance,None,None,None
-f_covers_g,None,1.085287,None
+f_covers_g,None,1.053991,None
 g_covers_f,None,None,None
 figure_lightsource,None,None,None
 figure_container,None,None,None

@@ -5,13 +5,13 @@ support,None,None,None
 ground_verticality,None,None,None
 size_ratio,None,None,None
 shortest_distance,None,None,None
-contact_proportion,None,-1.146867,None
+contact_proportion,None,1.299656,None
 above_proportion,None,None,None
 below_proportion,None,None,None
 bbox_overlap_proportion,None,None,None
-horizontal_distance,None,-2.761644,None
+horizontal_distance,None,-0.394011,None
 f_covers_g,None,None,None
 g_covers_f,None,None,None
 figure_lightsource,None,None,None
 figure_container,None,None,None
-location_control,None,0.569244,None
+location_control,None,0.651406,None

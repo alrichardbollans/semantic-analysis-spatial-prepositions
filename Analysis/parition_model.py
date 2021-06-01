@@ -16,12 +16,10 @@ class DataPartitionPolysemyModel(DistinctPrototypePolysemyModel):
     name = "Partition Model"
 
     def __init__(self, train_scenes, test_scenes, study_info_, test_prepositions=PREPOSITION_LIST,
-                 preserve_empty_polysemes=False,
                  baseline_model=None,
                  features_to_remove=None):
         DistinctPrototypePolysemyModel.__init__(self, DataPartitionPolysemyModel.name, train_scenes, test_scenes,
                                                 study_info_, test_prepositions=test_prepositions,
-                                                preserve_empty_polysemes=preserve_empty_polysemes,
                                                 baseline_model=baseline_model, features_to_remove=features_to_remove)
 
     def refine_ideal_meaning(self, preposition, original_salient_features):
@@ -63,12 +61,10 @@ class DistinctPrototypeMedianPolysemyModel(DistinctPrototypePolysemyModel):
     name = "Median Model"
 
     def __init__(self, train_scenes, test_scenes, study_info_, test_prepositions=PREPOSITION_LIST,
-                 preserve_empty_polysemes=False,
                  baseline_model=None,
                  features_to_remove=None):
         DistinctPrototypePolysemyModel.__init__(self, self.name, train_scenes, test_scenes, study_info_,
                                                 test_prepositions=test_prepositions,
-                                                preserve_empty_polysemes=preserve_empty_polysemes,
                                                 baseline_model=baseline_model, features_to_remove=features_to_remove)
 
     def refine_ideal_meaning(self, preposition, original_salient_features):
@@ -99,8 +95,7 @@ class DistinctPrototypeMedianPolysemyModel(DistinctPrototypePolysemyModel):
 
 class GeneratePartitionModels(GenerateBasicModels):
 
-    def __init__(self, train_scenes, test_scenes, study_info_, test_prepositions=PREPOSITION_LIST,
-                 preserve_empty_polysemes=False):
+    def __init__(self, train_scenes, test_scenes, study_info_, test_prepositions=PREPOSITION_LIST):
         GenerateBasicModels.__init__(self, train_scenes, test_scenes, study_info_,
                                      test_prepositions=test_prepositions)
 

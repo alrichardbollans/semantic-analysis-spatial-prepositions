@@ -21,12 +21,10 @@ ASSOCIATED_FEATURES["above"] = ASSOCIATED_FEATURES["over"]
 class OSFSenseModel(DistinctPrototypePolysemyModel):
 
     def __init__(self, name, train_scenes, test_scenes, study_info_, test_prepositions=PREPOSITION_LIST,
-                 preserve_empty_polysemes=False,
                  baseline_model=None):
         features_to_remove = Configuration.object_specific_features.copy()
         DistinctPrototypePolysemyModel.__init__(self, name, train_scenes, test_scenes, study_info_,
                                                 test_prepositions=test_prepositions,
-                                                preserve_empty_polysemes=preserve_empty_polysemes,
                                                 baseline_model=baseline_model, features_to_remove=features_to_remove,
                                                 oversample=True)
 
@@ -130,18 +128,18 @@ def output_model_params():
 
     generated_polyseme_models = GenerateOSModels(all_scenes, all_scenes, s_info, PREPOSITION_LIST)
 
-    # sense_model = generated_polyseme_models.sense_model
+    # for m in generated_polyseme_models.models:
+    #     for preposition in PREPOSITION_LIST:
+    #         m.output_typicalities(preposition)
+    #
+    #     m.output_unsatisfied_constraints()
 
-    # sense_model.output_polyseme_info()
-    for m in generated_polyseme_models.models:
-        # for preposition in PREPOSITION_LIST:
-        #     m.output_typicalities(preposition)
+    generated_polyseme_models.distinct_supervised_model.output_polyseme_info()
+    generated_polyseme_models.sense_model.output_polyseme_info()
 
-        m.output_unsatisfied_constraints()
 
 def test_poly_preps():
     compare_models(10, 10, GenerateOSModels, OSF_POLY_SCORES_FOLDER, test_prepositions=POLYSEMOUS_PREPOSITIONS)
-
 
 
 def test_models():

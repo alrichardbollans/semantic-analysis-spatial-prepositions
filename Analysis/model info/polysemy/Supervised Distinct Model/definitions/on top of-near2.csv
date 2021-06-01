@@ -5,8 +5,8 @@ support,None,None,None
 ground_verticality,None,None,None
 size_ratio,None,None,None
 shortest_distance,None,None,None
-contact_proportion,None,1.30078,None
-above_proportion,None,None,0.52766
+contact_proportion,None,1.649488,None
+above_proportion,None,None,0.424669
 below_proportion,None,None,None
 bbox_overlap_proportion,None,None,None
 horizontal_distance,None,None,None

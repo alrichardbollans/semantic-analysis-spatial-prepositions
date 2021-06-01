@@ -8,7 +8,7 @@ shortest_distance,None,None,None
 contact_proportion,None,None,None
 above_proportion,None,None,None
 below_proportion,None,None,None
-bbox_overlap_proportion,None,None,8.680911
+bbox_overlap_proportion,None,None,2.825224
 horizontal_distance,None,None,None
 f_covers_g,None,None,None
 g_covers_f,None,None,None

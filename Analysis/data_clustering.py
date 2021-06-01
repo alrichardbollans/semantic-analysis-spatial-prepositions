@@ -457,8 +457,7 @@ def output_clustering_info(study_info_):
         study_info_ (TYPE): Description
     """
     all_scenes = study_info_.scene_name_list
-    generated_polysemy_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info_,
-                                                       preserve_empty_polysemes=True)
+    generated_polysemy_models = GeneratePolysemeModels(all_scenes, all_scenes, study_info_)
     mpl.rcParams['font.size'] = 15
     mpl.rcParams['legend.fontsize'] = 12
     for preposition in PREPOSITION_LIST:
