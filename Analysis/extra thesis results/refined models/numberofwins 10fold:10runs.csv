@@ -1,6 +1,0 @@
-,Distinct Prototype,Baseline Model,KMeans Model,Refined Distinct Model,Median Distinct Model
-Distinct Prototype,0,43,37,36,55
-Baseline Model,50,0,44,33,67
-KMeans Model,53,43,0,36,66
-Refined Distinct Model,55,55,54,0,70
-Median Distinct Model,42,26,28,23,0
