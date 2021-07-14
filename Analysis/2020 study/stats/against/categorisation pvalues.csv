@@ -1,3 +1,0 @@
-Scene1,Figure1,Ground1,Scene2,Figure2,Ground2,c1_times_labelled,c1_times_not_labelled,c2_times_labelled,c2_times_not_labelled,p_value_one_tail
-sv_modtypa2,box,table,sv_modtypa1,table,box,10.0,1.0,7.0,0.0,1.0
-sv_modtypa1,table,box,sv_modtypa2,box,table,7.0,0.0,10.0,1.0,0.6111111111111122

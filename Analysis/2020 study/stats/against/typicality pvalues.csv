@@ -1,3 +1,0 @@
-Scene1,Figure1,Ground1,Scene2,Figure2,Ground2,number of comparisons,c1 selected,c2 selected,p_value_one_tail
-sv_modtypa1,table,box,sv_modtypa2,box,table,24,1,22,0.9999999403953552
-sv_modtypa2,box,table,sv_modtypa1,table,box,24,22,1,1.7940998077392578e-05

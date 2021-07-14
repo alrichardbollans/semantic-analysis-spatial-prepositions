@@ -1,5 +1,0 @@
-Scene1,Figure1,Ground1,Scene2,Figure2,Ground2,p_value_one_tail
-sv_modtypi3,box,table,sv_modtypi2,pear,bowl,0.08984375
-sv_modtypi4,pencil,mug,sv_modtypi3,box,table,0.019287109375
-sv_modtypi4,pencil,mug,sv_modtypi1,cube,shelf,6.103515625e-05
-sv_modtypi4,pencil,mug,sv_modtypi2,pear,bowl,0.001953125
