@@ -1,2 +1,0 @@
-,Scene,Figure,Ground,ground_lightsource,ground_container,support,ground_verticality,shortest_distance,contact_proportion,above_proportion,below_proportion,bbox_overlap_proportion,horizontal_distance,f_covers_g,g_covers_f,location_control,selection_ratio,selected_atleast_once
-108,compsvu15,book,balloon,-0.12166736738870315,-0.5968659206925575,-0.6274330686697578,2.6050784063451293,0.6464938023285673,-0.4495031203312162,-0.9059561524155018,1.6343840719040237,-0.3570435486078057,-0.9144830326470749,0.2532155678620784,1.5240177774945138,-0.8052554546961859,0.6,1

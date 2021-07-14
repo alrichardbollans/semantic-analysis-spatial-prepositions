@@ -1,1 +1,0 @@
-This folder contains plots of the linear regressions used to find prototypes for each preposition

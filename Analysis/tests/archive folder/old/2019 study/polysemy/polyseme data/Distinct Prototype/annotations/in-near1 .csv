@@ -1,2 +1,0 @@
-,Scene,Figure,Ground,ground_lightsource,ground_container,support,ground_verticality,shortest_distance,contact_proportion,above_proportion,below_proportion,bbox_overlap_proportion,horizontal_distance,f_covers_g,g_covers_f,location_control,selection_ratio,selected_atleast_once
-137,compsvinew2,mug,shelf,-0.12166736738870315,-0.5968659206925575,1.6837178985981087,-0.3832424471159501,-0.602573893987224,2.092075168772348,-0.9059561524155018,-0.7484621051199398,3.938588212351634,-0.3893656586160204,-0.5404594230137074,1.2298727322621572,1.117380118411612,0.2,1

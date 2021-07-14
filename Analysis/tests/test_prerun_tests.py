@@ -27,6 +27,7 @@ os.chdir('..')
 class MyTestCase(unittest.TestCase):
     # @unittest.skip
     def test_sv_outputs(self):
+
         study_info = StudyInfo("2019 study")
 
         svcollection = SemanticCollection(study_info)
