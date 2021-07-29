@@ -1,3 +1,5 @@
+# Calculate variance of model scores.
+
 import statistics
 
 import pandas as pd
@@ -5,10 +7,10 @@ import pandas as pd
 from Analysis.parition_model import PARTITION_FOLDER
 from Analysis.performance_test_functions import OSF_SCORES_FOLDER, BASIC_MODEL_SCORES_FOLDER, NEURAL_MODEL_SCORES_FOLDER
 
+folders = [PARTITION_FOLDER,OSF_SCORES_FOLDER,NEURAL_MODEL_SCORES_FOLDER]
+
 folds_csv = ''
 
-
-# TODO:output all variances for tests
 
 def get_models_scores(csv_file):
     output_dict = dict()
@@ -77,7 +79,9 @@ def output_variance(table_folder):
 
 
 def output_all_variance():
-    output_variance(PARTITION_FOLDER + "tables/")
+    for folder in folders:
+
+        output_variance(folder + "tables/")
 
 
 
