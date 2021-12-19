@@ -1,4 +1,4 @@
-Task: comp,Number of Native English users: 29
+Task: comp,Number of Native English users: 29, , , 
 Preposition,Number of Shared Annotations,Average Expected agreement,Average observed Agreement,Average cohens_kappa
 in,155,0.7674193548387094,0.832258064516129,0.8064516129032258
 inside,178,0.8051498127340824,0.8651685393258427,0.8216902784562775
@@ -9,5 +9,5 @@ under,121,0.48502558048012606,0.71900826446281,0.656247792611429
 below,144,0.4303819444444448,0.7361111111111112,0.6932202774875188
 over,139,0.5410071942446044,0.7194244604316546,0.652987686773658
 above,160,0.5876190476190475,0.70625,0.6217902131782946
-Total Number of Shared Annotations,Average Expected Agreements,Average observed agreements,Average Cohens Kappa
-1325,0.5661913746630728,0.7660377358490567,0.7173105547649992
+Total Number of Shared Annotations,Average Expected Agreements,Average observed agreements,Average Cohens Kappa, 
+1325,0.5661913746630728,0.7660377358490567,0.7173105547649992, 
