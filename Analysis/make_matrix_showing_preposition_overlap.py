@@ -22,16 +22,15 @@ def prepare_data():
         p2_data = get_preposition_data(p2)
         selected_p2 = p2_data[p2_data['selected_atleast_once'] == 1]
 
-        in_either_data =pd.concat([selected_p1,selected_p2])
-        in_either_data.drop_duplicates(subset=['Unique_config'], keep='first',inplace=True)
+        in_either_data = pd.concat([selected_p1, selected_p2])
+        in_either_data.drop_duplicates(subset=['Unique_config'], keep='first', inplace=True)
         in_both_data = selected_p1[selected_p1['Unique_config'].isin(selected_p2['Unique_config'])]
 
         value = float(len(in_both_data.index)) / len(in_either_data.index)
 
         if p1 == p2:
-            assert value==1
+            assert value == 1
         return value
-
 
     ## Make df
     prep1_list = []
@@ -41,40 +40,43 @@ def prepare_data():
         for p2 in preposition_list:
             prep1_list.append(p1)
             prep2_list.append(p2)
-            values.append(get_value_for_prep_pair(p1,p2))
+            values.append(get_value_for_prep_pair(p1, p2))
 
-
-
-
-    out_data = pd.DataFrame({'Prep1':prep1_list,'Prep2':prep2_list,'Values':values})
+    out_data = pd.DataFrame({'Prep1': prep1_list, 'Prep2': prep2_list, 'Values': values})
     file = os.path.join('2019 study', 'preposition data', 'preposition_relations.csv')
 
     out_data.to_csv(file)
 
 
 def your_function():
-    # TODO: make this look nicer, drop final prepositions in labels
-    data_file =os.path.join('2019 study', 'preposition data', 'preposition_relations.csv')
+    data_file = os.path.join('2019 study', 'preposition data', 'preposition_relations.csv')
 
     data = pd.read_csv(data_file)
     result = data.pivot(index='Prep2', columns='Prep1', values='Values')
-    # # Generate a mask for the upper triangle
-    mask = np.zeros_like(result, dtype=np.bool)
-    mask[np.triu_indices_from(mask)] = True
+    # mask
+    mask = np.triu(np.ones_like(result, dtype=np.bool))  # adjust mask and df
+    mask = mask[1:, :-1]
+    corr = result.iloc[1:, :-1].copy()
 
     # Set up the matplotlib figure
     f, ax = plt.subplots(figsize=(11, 9))
 
     # Draw the heatmap with the mask and correct aspect ratio
     sns.heatmap(
-        result,
+        corr,
         mask=mask,
-        cmap ="coolwarm",
+        cmap="coolwarm",
         # vmax=1,
+        annot=True,
         linewidths=0.5,
         cbar_kws={"shrink": 0.7},
         ax=ax,
     )
+    plt.xlabel('')
+    plt.ylabel('')
+    # plt.title('Preposition Co-occurrence Matrix',size=20)
+    # yticks
+    plt.yticks(rotation=0)
     file = os.path.join('2019 study', 'preposition data', 'preposition_relations.png')
     f.tight_layout()
     plt.savefig(file)
