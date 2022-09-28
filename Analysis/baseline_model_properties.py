@@ -50,7 +50,6 @@ if __name__ == "__main__":
     study_info = StudyInfo("2019 study")
 
     plot_preposition_graphs(study_info)
-    mpl.rcParams['font.size'] = 25
     plot_feature_regression(study_info)
     plot_feature_spaces(study_info)
 
