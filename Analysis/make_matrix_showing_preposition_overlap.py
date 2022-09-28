@@ -50,7 +50,7 @@ def prepare_data():
 
 def your_function():
     data_file = os.path.join('2019 study', 'preposition data', 'preposition_relations.csv')
-
+    plt.rc('font', size=15)  # controls default text size
     data = pd.read_csv(data_file)
     result = data.pivot(index='Prep2', columns='Prep1', values='Values')
     # mask
