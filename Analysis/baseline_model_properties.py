@@ -42,13 +42,15 @@ def plot_preposition_graphs(study_info):
     for p in PREPOSITION_LIST:
 
         M = generated_models.preposition_parameters_dict[p]
-        M.output_models()
+        # M.output_models()
         M.plot_models()
 
 
 if __name__ == "__main__":
     study_info = StudyInfo("2019 study")
+
+    plot_preposition_graphs(study_info)
     mpl.rcParams['font.size'] = 25
     plot_feature_regression(study_info)
     plot_feature_spaces(study_info)
-    plot_preposition_graphs(study_info)
+
